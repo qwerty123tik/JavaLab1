@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findAll()
                 .stream()
                 .map(recipeMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -39,14 +38,14 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeRepository.findByDifficulty(difficulty)
                 .stream()
                 .map(recipeMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public List<RecipeResponse> getRecipesByMaxCookingTime(int maxTime) {
         return recipeRepository.findByMaxCookingTime(maxTime).stream()
                 .map(recipeMapper::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
