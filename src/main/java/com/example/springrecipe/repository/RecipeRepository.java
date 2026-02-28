@@ -36,12 +36,6 @@ public class RecipeRepository {
                 .toList();
     }
 
-    public List<Recipe> findByMaxCookingTime(int maxTime) {
-        return recipes.values().stream()
-                .filter(recipe -> recipe.getCookingTime() <= maxTime)
-                .toList();
-    }
-
     public void deleteById(Long id) {
         recipes.remove(id);
     }

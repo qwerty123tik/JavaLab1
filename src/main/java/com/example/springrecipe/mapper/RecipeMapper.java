@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RecipeMapper {
 
-    public RecipeResponse toResponse(Recipe recipe){
+    public RecipeResponse toResponse(Recipe recipe) {
         if (recipe == null) {
             return null;
         }
@@ -22,6 +22,7 @@ public class RecipeMapper {
         dto.setDifficulty(recipe.getDifficulty());
         return dto;
     }
+
     public Recipe toEntity(RecipeRequest dto) {
         if (dto == null) {
             return null;

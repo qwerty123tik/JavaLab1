@@ -42,13 +42,6 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    public List<RecipeResponse> getRecipesByMaxCookingTime(int maxTime) {
-        return recipeRepository.findByMaxCookingTime(maxTime).stream()
-                .map(recipeMapper::toResponse)
-                .toList();
-    }
-
-    @Override
     public RecipeResponse createRecipe(RecipeRequest recipeRequest) {
         Recipe recipe = recipeMapper.toEntity(recipeRequest);
         Recipe savedRecipe = recipeRepository.save(recipe);

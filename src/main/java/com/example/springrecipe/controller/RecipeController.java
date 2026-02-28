@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import java.util.List;
 
 @RestController
@@ -45,15 +44,14 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.getRecipesByDifficulty(difficulty));
     }
 
-
-
     @PostMapping
     public ResponseEntity<RecipeResponse> createRecipe(@RequestBody RecipeRequest recipeRequest) {
         return new ResponseEntity<>(recipeService.createRecipe(recipeRequest), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RecipeResponse> updateRecipe(@PathVariable Long id, @RequestBody RecipeRequest recipeRequest){
+    public ResponseEntity<RecipeResponse> updateRecipe(
+            @PathVariable Long id, @RequestBody RecipeRequest recipeRequest) {
         return ResponseEntity.ok(recipeService.updateRecipe(id, recipeRequest));
     }
 
