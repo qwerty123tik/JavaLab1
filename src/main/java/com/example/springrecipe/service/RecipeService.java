@@ -78,30 +78,7 @@ public class RecipeService {
         recipe.setAuthor(author);
         recipe.setCategory(category);
 
-        if (dto.getIngredients() != null && !dto.getIngredients().isEmpty()) {
-            List<Ingredient> ingredients = new ArrayList<>();
-
-            for (IngredientDTO ingDto : dto.getIngredients()) {
-                Ingredient ingredient = ingredientRepository.findByName(ingDto.getName())
-                        .orElseGet(() -> {
-                            Ingredient newIngredient = new Ingredient();
-                            newIngredient.setName(ingDto.getName());
-
-                            if (ingDto.getUnitAbbreviation() != null) {
-                                UnitOfMeasure unit = unitRepository.findByAbbreviation(ingDto.getUnitAbbreviation())
-                                        .orElseThrow(() -> new UnitNotFoundException(
-                                                "Unit not found: " + ingDto.getUnitAbbreviation()));
-                                newIngredient.setUnit(unit);
-                            }
-
-                            return ingredientRepository.save(newIngredient);
-                        });
-
-                ingredients.add(ingredient);
-            }
-
-            recipe.setIngredients(ingredients);
-        }
+        setRecipeIngredients(recipe, dto.getIngredients());
 
         recipe = recipeRepository.save(recipe);
         return mapper.toRecipeDTO(recipe);
@@ -122,30 +99,7 @@ public class RecipeService {
             recipe.setCategory(category);
         }
 
-        if (dto.getIngredients() != null && !dto.getIngredients().isEmpty()) {
-            List<Ingredient> ingredients = new ArrayList<>();
-
-            for (IngredientDTO ingDto : dto.getIngredients()) {
-                Ingredient ingredient = ingredientRepository.findByName(ingDto.getName())
-                        .orElseGet(() -> {
-                            Ingredient newIngredient = new Ingredient();
-                            newIngredient.setName(ingDto.getName());
-
-                            if (ingDto.getUnitAbbreviation() != null) {
-                                UnitOfMeasure unit = unitRepository.findByAbbreviation(ingDto.getUnitAbbreviation())
-                                        .orElseThrow(() -> new UnitNotFoundException(
-                                                "Unit not found: " + ingDto.getUnitAbbreviation()));
-                                newIngredient.setUnit(unit);
-                            }
-
-                            return ingredientRepository.save(newIngredient);
-                        });
-
-                ingredients.add(ingredient);
-            }
-
-            recipe.setIngredients(ingredients);
-        }
+        setRecipeIngredients(recipe, dto.getIngredients());
 
         recipe = recipeRepository.save(recipe);
         return mapper.toRecipeDTO(recipe);
@@ -159,4 +113,33 @@ public class RecipeService {
         recipeRepository.deleteById(id);
     }
 
+    private void setRecipeIngredients(Recipe recipe, List<IngredientDTO> ingredientDTOs) {
+        if (ingredientDTOs == null || ingredientDTOs.isEmpty()) {
+            return;
+        }
+
+        List<Ingredient> ingredients = new ArrayList<>();
+
+        for (IngredientDTO ingDto : ingredientDTOs) {
+            Ingredient ingredient = ingredientRepository.findByName(ingDto.getName())
+                    .orElseGet(() -> createNewIngredient(ingDto));
+            ingredients.add(ingredient);
+        }
+
+        recipe.setIngredients(ingredients);
+    }
+
+    private Ingredient createNewIngredient(IngredientDTO ingDto) {
+        Ingredient newIngredient = new Ingredient();
+        newIngredient.setName(ingDto.getName());
+
+        if (ingDto.getUnitAbbreviation() != null) {
+            UnitOfMeasure unit = unitRepository.findByAbbreviation(ingDto.getUnitAbbreviation())
+                    .orElseThrow(() -> new UnitNotFoundException(
+                            "Unit not found: " + ingDto.getUnitAbbreviation()));
+            newIngredient.setUnit(unit);
+        }
+
+        return ingredientRepository.save(newIngredient);
+    }
 }
