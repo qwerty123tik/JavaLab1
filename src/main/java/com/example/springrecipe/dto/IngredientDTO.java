@@ -12,5 +12,4 @@ public class IngredientDTO {
     private String name;
     private String unitName;
     private String unitAbbreviation;
-    //private Long unitId;
 }

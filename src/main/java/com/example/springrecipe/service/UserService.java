@@ -17,21 +17,18 @@ public class UserService {
     private final UserRepository userRepository;
     private final RecipeMapper mapper;
 
-   // @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(mapper::toUserDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    //@Transactional(readOnly = true)
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return mapper.toUserDTO(user);
     }
 
-   // @Transactional(readOnly = true)
     public List<UserDTO> searchUsers(String query) {
         return userRepository.findByUserName(query).stream()
                 .map(mapper::toUserDTO)

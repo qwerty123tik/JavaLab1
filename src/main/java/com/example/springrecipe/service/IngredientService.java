@@ -24,7 +24,7 @@ public class IngredientService {
     public List<IngredientDTO> getAllIngredients() {
         return ingredientRepository.findAll().stream()
                 .map(mapper::toIngredientDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)

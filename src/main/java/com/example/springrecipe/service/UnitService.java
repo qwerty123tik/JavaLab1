@@ -20,7 +20,7 @@ public class UnitService {
     public List<UnitDTO> getAllUnits() {
         return unitRepository.findAll().stream()
                 .map(mapper::toUnitDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional

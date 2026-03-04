@@ -17,14 +17,12 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final RecipeMapper mapper;
 
-    //@Transactional(readOnly = true)
     public List<CategoryDTO> getAllCategories() {
         return categoryRepository.findAll().stream()
                 .map(mapper::toCategoryDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
-   // @Transactional(readOnly = true)
     public CategoryDTO getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));

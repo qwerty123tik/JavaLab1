@@ -35,11 +35,7 @@ public class Recipe {
 
     private String description;
 
-    //private String instructions;
-
     private int cookingTime;
-
-    //private String difficulty;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")

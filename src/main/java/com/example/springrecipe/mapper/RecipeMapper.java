@@ -46,15 +46,6 @@ public class RecipeMapper {
             dto.setAuthorName(null);
         }
 
-       /* if (recipe.getIngredients() != null) {
-            dto.setIngredientIds(recipe.getIngredients().stream()
-                    .map(Ingredient::getId)
-                    .collect(Collectors.toList()));
-            dto.setIngredientNames(recipe.getIngredients().stream()
-                    .map(Ingredient::getName)
-                    .collect(Collectors.toList()));
-        }*/
-
         if (recipe.getIngredients() != null) {
             dto.setIngredientNames(recipe.getIngredients().stream()
                     .map(Ingredient::getName)

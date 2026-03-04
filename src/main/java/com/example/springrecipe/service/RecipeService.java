@@ -36,7 +36,7 @@ public class RecipeService {
     public List<RecipeDTO> getAllRecipes() {
         return recipeRepository.findAllWithDetails().stream()
                 .map(mapper::toRecipeDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -119,10 +119,6 @@ public class RecipeService {
             recipe.setCategory(category);
         }
 
-        /*if (dto.getIngredientIds() != null) {
-            List<Ingredient> ingredients = ingredientRepository.findAllById(dto.getIngredientIds());
-            recipe.setIngredients(ingredients);
-        }*/
         if (dto.getIngredients() != null && !dto.getIngredients().isEmpty()) {
             List<Ingredient> ingredients = new ArrayList<>();
 

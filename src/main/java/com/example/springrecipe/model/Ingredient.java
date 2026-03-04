@@ -27,7 +27,6 @@ public class Ingredient {
     private Long id;
 
     private String name;
-   // private Double quantity;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "unit_id")

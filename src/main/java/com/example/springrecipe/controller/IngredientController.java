@@ -32,11 +32,6 @@ public class IngredientController {
         return ResponseEntity.ok(ingredientService.getIngredientById(id));
     }
 
-    /*@GetMapping("/recipe/{recipeId}")
-    public ResponseEntity<List<IngredientDTO>> getIngredientsByRecipe(@PathVariable Long recipeId) {
-        return ResponseEntity.ok(ingredientService.getIngredientsByRecipe(recipeId));
-    }*/
-
     @PostMapping
     public ResponseEntity<IngredientDTO> createIngredient(@RequestBody IngredientDTO dto) {
         return new ResponseEntity<>(ingredientService.createIngredient(dto), HttpStatus.CREATED);

@@ -24,7 +24,6 @@ public class Review {
 
     private int rating;
     private String comment;
-    //private LocalDateTime creationDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)

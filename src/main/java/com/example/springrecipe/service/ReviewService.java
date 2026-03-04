@@ -27,7 +27,7 @@ public class ReviewService {
     public List<ReviewDTO> getAllReviews() {
         return reviewRepository.findAll().stream()
                 .map(mapper::toReviewDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)
