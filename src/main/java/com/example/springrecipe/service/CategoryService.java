@@ -1,6 +1,7 @@
 package com.example.springrecipe.service;
 
 import com.example.springrecipe.dto.CategoryDTO;
+import com.example.springrecipe.exceptions.CategoryNotFoundException;
 import com.example.springrecipe.mapper.RecipeMapper;
 import com.example.springrecipe.model.Category;
 import com.example.springrecipe.repository.CategoryRepository;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,14 +25,14 @@ public class CategoryService {
 
     public CategoryDTO getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
         return mapper.toCategoryDTO(category);
     }
 
     @Transactional
     public CategoryDTO createCategory(CategoryDTO dto) {
         if (categoryRepository.findByName(dto.getName()).isPresent()) {
-            throw new RuntimeException("Category already exists");
+            throw new CategoryNotFoundException("Category already exists");
         }
 
         Category category = new Category();
@@ -46,7 +46,7 @@ public class CategoryService {
     @Transactional
     public CategoryDTO updateCategory(Long id, CategoryDTO dto) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
 
         category.setName(dto.getName());
         category.setDescription(dto.getDescription());
@@ -58,7 +58,7 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(Long id) {
         if (!categoryRepository.existsById(id)) {
-            throw new RuntimeException("Category not found");
+            throw new CategoryNotFoundException("Category not found");
         }
         categoryRepository.deleteById(id);
     }

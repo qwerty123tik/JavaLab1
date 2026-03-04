@@ -1,6 +1,7 @@
 package com.example.springrecipe.service;
 
 import com.example.springrecipe.dto.UserDTO;
+import com.example.springrecipe.exceptions.UserNotFoundException;
 import com.example.springrecipe.mapper.RecipeMapper;
 import com.example.springrecipe.model.User;
 import com.example.springrecipe.repository.UserRepository;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,20 +25,20 @@ public class UserService {
 
     public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return mapper.toUserDTO(user);
     }
 
     public List<UserDTO> searchUsers(String query) {
         return userRepository.findByUserName(query).stream()
                 .map(mapper::toUserDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
     public UserDTO createUser(UserDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new UserNotFoundException("Email already exists");
         }
 
         User user = new User();
@@ -52,7 +52,7 @@ public class UserService {
     @Transactional
     public UserDTO updateUser(Long id, UserDTO dto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         user.setUserName(dto.getUserName());
         user.setEmail(dto.getEmail());
@@ -64,7 +64,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
         userRepository.deleteById(id);
     }

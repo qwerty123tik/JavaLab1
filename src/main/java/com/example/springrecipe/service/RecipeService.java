@@ -2,6 +2,10 @@ package com.example.springrecipe.service;
 
 import com.example.springrecipe.dto.IngredientDTO;
 import com.example.springrecipe.dto.RecipeDTO;
+import com.example.springrecipe.exceptions.CategoryNotFoundException;
+import com.example.springrecipe.exceptions.RecipeNotFoundException;
+import com.example.springrecipe.exceptions.UnitNotFoundException;
+import com.example.springrecipe.exceptions.UserNotFoundException;
 import com.example.springrecipe.mapper.RecipeMapper;
 import com.example.springrecipe.model.Category;
 import com.example.springrecipe.model.Ingredient;
@@ -19,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +45,7 @@ public class RecipeService {
     @Transactional(readOnly = true)
     public RecipeDTO getRecipeById(Long id) {
         Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + id));
         return mapper.toRecipeDTO(recipe);
     }
 
@@ -50,23 +53,23 @@ public class RecipeService {
     public List<RecipeDTO> getRecipesByAuthor(Long authorId) {
         return recipeRepository.findByAuthorId(authorId).stream()
                 .map(mapper::toRecipeDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public List<RecipeDTO> getRecipesByCategory(Long categoryId) {
         return recipeRepository.findByCategoryId(categoryId).stream()
                 .map(mapper::toRecipeDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
     public RecipeDTO createRecipe(RecipeDTO dto) {
         User author = userRepository.findById(dto.getAuthorId())
-                .orElseThrow(() -> new RuntimeException("Author not found"));
+                .orElseThrow(() -> new UserNotFoundException("Author not found"));
 
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
 
         Recipe recipe = new Recipe();
         recipe.setName(dto.getName());
@@ -86,7 +89,7 @@ public class RecipeService {
 
                             if (ingDto.getUnitAbbreviation() != null) {
                                 UnitOfMeasure unit = unitRepository.findByAbbreviation(ingDto.getUnitAbbreviation())
-                                        .orElseThrow(() -> new RuntimeException(
+                                        .orElseThrow(() -> new UnitNotFoundException(
                                                 "Unit not found: " + ingDto.getUnitAbbreviation()));
                                 newIngredient.setUnit(unit);
                             }
@@ -107,7 +110,7 @@ public class RecipeService {
     @Transactional
     public RecipeDTO updateRecipe(Long id, RecipeDTO dto) {
         Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
 
         recipe.setName(dto.getName());
         recipe.setDescription(dto.getDescription());
@@ -115,7 +118,7 @@ public class RecipeService {
 
         if (dto.getCategoryId() != null) {
             Category category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+                    .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
             recipe.setCategory(category);
         }
 
@@ -130,7 +133,7 @@ public class RecipeService {
 
                             if (ingDto.getUnitAbbreviation() != null) {
                                 UnitOfMeasure unit = unitRepository.findByAbbreviation(ingDto.getUnitAbbreviation())
-                                        .orElseThrow(() -> new RuntimeException(
+                                        .orElseThrow(() -> new UnitNotFoundException(
                                                 "Unit not found: " + ingDto.getUnitAbbreviation()));
                                 newIngredient.setUnit(unit);
                             }
@@ -151,7 +154,7 @@ public class RecipeService {
     @Transactional
     public void deleteRecipe(Long id) {
         if (!recipeRepository.existsById(id)) {
-            throw new RuntimeException("Recipe not found");
+            throw new RecipeNotFoundException("Recipe not found");
         }
         recipeRepository.deleteById(id);
     }

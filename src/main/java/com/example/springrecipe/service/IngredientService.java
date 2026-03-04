@@ -1,6 +1,8 @@
 package com.example.springrecipe.service;
 
 import com.example.springrecipe.dto.IngredientDTO;
+import com.example.springrecipe.exceptions.IngredientNotFoundException;
+import com.example.springrecipe.exceptions.UnitNotFoundException;
 import com.example.springrecipe.mapper.RecipeMapper;
 import com.example.springrecipe.model.Ingredient;
 import com.example.springrecipe.model.UnitOfMeasure;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -30,7 +31,7 @@ public class IngredientService {
     @Transactional(readOnly = true)
     public IngredientDTO getIngredientById(Long id) {
         Ingredient ingredient = ingredientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ingredient not found"));
+                .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found"));
         return mapper.toIngredientDTO(ingredient);
     }
 
@@ -41,7 +42,7 @@ public class IngredientService {
 
         if (dto.getUnitAbbreviation() != null) {
             UnitOfMeasure unit = unitRepository.findByAbbreviation(dto.getUnitAbbreviation())
-                    .orElseThrow(() -> new RuntimeException("Unit not found"));
+                    .orElseThrow(() -> new IngredientNotFoundException("Unit not found"));
             ingredient.setUnit(unit);
         }
 
@@ -52,13 +53,13 @@ public class IngredientService {
     @Transactional
     public IngredientDTO updateIngredient(Long id, IngredientDTO dto) {
         Ingredient ingredient = ingredientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ingredient not found"));
+                .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found"));
 
         ingredient.setName(dto.getName());
 
         if (dto.getUnitAbbreviation() != null) {
             UnitOfMeasure unit = unitRepository.findByAbbreviation(dto.getUnitAbbreviation())
-                    .orElseThrow(() -> new RuntimeException(
+                    .orElseThrow(() -> new UnitNotFoundException(
                             "Unit not found with abbreviation: " + dto.getUnitAbbreviation()));
             ingredient.setUnit(unit);
         }
@@ -69,7 +70,7 @@ public class IngredientService {
     @Transactional
     public void deleteIngredient(Long id) {
         if (!ingredientRepository.existsById(id)) {
-            throw new RuntimeException("Ingredient not found");
+            throw new IngredientNotFoundException("Ingredient not found");
         }
         ingredientRepository.deleteById(id);
     }
