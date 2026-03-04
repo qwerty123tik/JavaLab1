@@ -1,4 +1,4 @@
-package com.example.springrecipe.service.impl;
+/*package com.example.springrecipe.service.impl;
 
 import com.example.springrecipe.dto.RecipeRequest;
 import com.example.springrecipe.dto.RecipeResponse;
@@ -42,6 +42,11 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
+    public Recipe saveRecipe(String recipe) {
+        return null;
+    }
+
+    @Override
     public RecipeResponse createRecipe(RecipeRequest recipeRequest) {
         Recipe recipe = recipeMapper.toEntity(recipeRequest);
         Recipe savedRecipe = recipeRepository.save(recipe);
@@ -67,4 +72,4 @@ public class RecipeServiceImpl implements RecipeService {
     public void deleteRecipe(Long id) {
         recipeRepository.deleteById(id);
     }
-}
+}*/

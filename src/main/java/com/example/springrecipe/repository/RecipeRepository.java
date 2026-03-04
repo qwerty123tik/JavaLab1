@@ -1,42 +1,27 @@
 package com.example.springrecipe.repository;
 
 import com.example.springrecipe.model.Recipe;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-public class RecipeRepository {
-    private final ConcurrentHashMap<Long, Recipe> recipes = new ConcurrentHashMap<>();
-    private final AtomicLong idGenerator = new AtomicLong(1);
+public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
-    public Recipe save(Recipe recipe) {
-        if (recipe.getId() == null) {
-            recipe.setId(idGenerator.getAndIncrement());
-        }
-        recipes.put(recipe.getId(), recipe);
-        return recipe;
-    }
+    List<Recipe> findByAuthorId(Long authorId);
 
-    public Optional<Recipe> findById(Long id) {
-        return Optional.ofNullable(recipes.get(id));
-    }
+    List<Recipe> findByCategoryId(Long categoryId);
 
-    public List<Recipe> findAll() {
-        return new ArrayList<>(recipes.values());
-    }
+    List<Recipe> findByName(String name);
 
-    public List<Recipe> findByDifficulty(String difficulty) {
-        return recipes.values().stream()
-                .filter(recipe -> recipe.getDifficulty().equalsIgnoreCase(difficulty))
-                .toList();
-    }
+    @EntityGraph(attributePaths = {"category", "author", "ingredients"})
+    @Query("SELECT r FROM Recipe r")
+    List<Recipe> findAllWithDetails();
 
-    public void deleteById(Long id) {
-        recipes.remove(id);
-    }
+    @EntityGraph(attributePaths = {"category", "author", "ingredients", "reviews"})
+    Optional<Recipe> findById(Long id);
 }

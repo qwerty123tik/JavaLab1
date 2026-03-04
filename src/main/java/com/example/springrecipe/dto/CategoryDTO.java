@@ -5,13 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class RecipeResponse {
+@NoArgsConstructor
+public class CategoryDTO {
     private Long id;
     private String name;
     private String description;
-    private String instructions;
-    private int cookingTime;
-    private String difficulty;
+    private Long recipeCount;
 }

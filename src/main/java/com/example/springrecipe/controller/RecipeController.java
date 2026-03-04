@@ -1,7 +1,6 @@
 package com.example.springrecipe.controller;
 
-import com.example.springrecipe.dto.RecipeRequest;
-import com.example.springrecipe.dto.RecipeResponse;
+import com.example.springrecipe.dto.RecipeDTO;
 import com.example.springrecipe.service.RecipeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,37 +24,39 @@ public class RecipeController {
     private final RecipeService recipeService;
 
     @GetMapping
-    public ResponseEntity<List<RecipeResponse>> getAllRecipes() {
+    public ResponseEntity<List<RecipeDTO>> getAllRecipes( @RequestParam(required = false) Integer maxTime,
+                                                          @RequestParam(required = false) Long categoryId,
+                                                          @RequestParam(required = false) String title) {
+
         return ResponseEntity.ok(recipeService.getAllRecipes());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RecipeResponse> getRecipeById(@PathVariable Long id) {
+    public ResponseEntity<RecipeDTO> getRecipeById(@PathVariable Long id) {
         return ResponseEntity.ok(recipeService.getRecipeById(id));
     }
 
-    @GetMapping("difficulty/{difficulty}")
-    public ResponseEntity<List<RecipeResponse>> getRecipesByDifficulty(@PathVariable String difficulty) {
-        return ResponseEntity.ok(recipeService.getRecipesByDifficulty(difficulty));
+    @GetMapping("/author/{authorId}")
+    public ResponseEntity<List<RecipeDTO>> getRecipesByAuthor(@PathVariable Long authorId) {
+        return ResponseEntity.ok(recipeService.getRecipesByAuthor(authorId));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<RecipeResponse>> searchRecipes(@RequestParam String difficulty) {
-        return ResponseEntity.ok(recipeService.getRecipesByDifficulty(difficulty));
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<RecipeDTO>> getRecipesByCategory(@PathVariable Long categoryId) {
+        return ResponseEntity.ok(recipeService.getRecipesByCategory(categoryId));
     }
 
     @PostMapping
-    public ResponseEntity<RecipeResponse> createRecipe(@RequestBody RecipeRequest recipeRequest) {
-        return new ResponseEntity<>(recipeService.createRecipe(recipeRequest), HttpStatus.CREATED);
+    public ResponseEntity<RecipeDTO> createRecipe(@RequestBody RecipeDTO dto) {
+        return new ResponseEntity<>(recipeService.createRecipe(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RecipeResponse> updateRecipe(
-            @PathVariable Long id, @RequestBody RecipeRequest recipeRequest) {
-        return ResponseEntity.ok(recipeService.updateRecipe(id, recipeRequest));
+    public ResponseEntity<RecipeDTO> updateRecipe(@PathVariable Long id, @RequestBody RecipeDTO dto) {
+        return ResponseEntity.ok(recipeService.updateRecipe(id, dto));
     }
 
-    @DeleteMapping("delete_recipe/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
         recipeService.deleteRecipe(id);
         return ResponseEntity.noContent().build();
