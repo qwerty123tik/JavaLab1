@@ -36,6 +36,15 @@ public class RecipeService {
     private final RecipeMapper mapper;
 
     @Transactional(readOnly = true)
+    public List<RecipeDTO> getAllRecipesWithNPlusOneProblem() {
+        List<Recipe> recipe = recipeRepository.findAllWithDetails();
+
+        return recipeRepository.findAll().stream()
+                .map(mapper::toRecipeDTO)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     public List<RecipeDTO> getAllRecipes() {
         return recipeRepository.findAllWithDetails().stream()
                 .map(mapper::toRecipeDTO)
@@ -50,8 +59,8 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecipeDTO> getRecipesByAuthor(Long authorId) {
-        return recipeRepository.findByAuthorId(authorId).stream()
+    public List<RecipeDTO> getRecipesByAuthorEmail(String authorEmail) {
+        return recipeRepository.findByAuthorEmail(authorEmail).stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
     }

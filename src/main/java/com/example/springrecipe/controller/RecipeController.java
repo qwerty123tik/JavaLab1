@@ -31,14 +31,19 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.getAllRecipes());
     }
 
+    @GetMapping("/NPlusOne")
+    public ResponseEntity<List<RecipeDTO>> getAllRecipesWithNPlusOneProblem() {
+        return ResponseEntity.ok(recipeService.getAllRecipesWithNPlusOneProblem());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<RecipeDTO> getRecipeById(@PathVariable Long id) {
         return ResponseEntity.ok(recipeService.getRecipeById(id));
     }
 
-    @GetMapping("/author/{authorId}")
-    public ResponseEntity<List<RecipeDTO>> getRecipesByAuthor(@PathVariable Long authorId) {
-        return ResponseEntity.ok(recipeService.getRecipesByAuthor(authorId));
+    @GetMapping("/author/{authorEmail}")
+    public ResponseEntity<List<RecipeDTO>> getRecipesByAuthorEmail(@RequestParam String authorEmail) {
+        return ResponseEntity.ok(recipeService.getRecipesByAuthorEmail(authorEmail));
     }
 
     @GetMapping("/category/{categoryId}")

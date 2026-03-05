@@ -1,6 +1,7 @@
 package com.example.springrecipe.repository;
 
 import com.example.springrecipe.model.Recipe;
+import org.hibernate.annotations.AnyDiscriminatorImplicitValues;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,7 +15,11 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     List<Recipe> findByAuthorId(Long authorId);
 
+    List<Recipe> findByAuthorEmail(String authorEmail);
+
     List<Recipe> findByCategoryId(Long categoryId);
+
+    List<Recipe> findAll();
 
     @EntityGraph(attributePaths = {"category", "author", "ingredients"})
     @Query("SELECT r FROM Recipe r")
