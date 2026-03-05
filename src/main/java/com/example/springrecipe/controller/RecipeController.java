@@ -61,6 +61,30 @@ public class RecipeController {
         return new ResponseEntity<>(recipeService.createRecipe(dto), HttpStatus.CREATED);
     }
 
+    @PostMapping("/demo/withoutTransaction")
+    public ResponseEntity<?> createRecipeWithoutTransaction(@RequestBody RecipeDTO dto) {
+        try {
+            recipeService.createRecipeWithoutTransaction(dto);
+            return ResponseEntity.ok("Рецепт создан");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка: " + e.getMessage() +
+                            "\nНО! Рецепт мог сохраниться в БД! Проверьте таблицу recipes.");
+        }
+    }
+
+    @PostMapping("/demo/withTransaction")
+    public ResponseEntity<?> createRecipeWithTransaction(@RequestBody RecipeDTO dto) {
+        try {
+            recipeService.createRecipe(dto);  // Ваш существующий метод
+            return ResponseEntity.ok("Рецепт создан");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Ошибка: " + e.getMessage() +
+                            "\nБлагодаря @Transactional НИЧЕГО не сохранилось!");
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<RecipeDTO> updateRecipe(@PathVariable Long id, @RequestBody RecipeDTO dto) {
         return ResponseEntity.ok(recipeService.updateRecipe(id, dto));
