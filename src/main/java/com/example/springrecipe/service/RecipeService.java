@@ -89,6 +89,14 @@ public class RecipeService {
 
     @Transactional
     public RecipeDTO createRecipe(RecipeDTO dto) {
+        return executeRecipeCreation(dto);
+    }
+
+    public RecipeDTO createRecipeWithoutTransaction(RecipeDTO dto) {
+        return executeRecipeCreation(dto);
+    }
+
+    private RecipeDTO executeRecipeCreation(RecipeDTO dto) {
         User author = userRepository.findById(dto.getAuthorId())
                 .orElseThrow(() -> new UserNotFoundException("Author not found"));
 
@@ -135,55 +143,6 @@ public class RecipeService {
 
             recipeIngredientRepository.saveAll(recipeIngredients);
             recipe.setRecipeIngredients(recipeIngredients);
-        }
-
-        return mapper.toRecipeDTO(recipe);
-    }
-
-    public RecipeDTO createRecipeWithoutTransaction(RecipeDTO dto) {
-        User author = userRepository.findById(dto.getAuthorId())
-                .orElseThrow(() -> new UserNotFoundException("Author not found"));
-
-        Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException(CategoryNotFoundException.DEFAULT_MESSAGE));
-
-        Recipe recipe = new Recipe();
-        recipe.setName(dto.getName());
-        recipe.setDescription(dto.getDescription());
-        recipe.setCookingTime(dto.getCookingTime());
-        recipe.setAuthor(author);
-        recipe.setCategory(category);
-        recipe = recipeRepository.save(recipe);
-
-        if (dto.getRecipeIngredients() != null && !dto.getRecipeIngredients().isEmpty()) {
-            Set<RecipeIngredient> recipeIngredients = new HashSet<>();
-
-            for (RecipeIngredientDTO riDto : dto.getRecipeIngredients()) {
-                if (riDto.getIngredientName() == null || riDto.getIngredientName().isEmpty()) {
-                    throw new IllegalArgumentException("Ingredient name is required");
-                }
-                UnitOfMeasure unit = (riDto.getUnitAbbreviation() == null || riDto.getUnitAbbreviation().isEmpty())
-                        ? null
-                        : unitRepository.findByAbbreviation(riDto.getUnitAbbreviation())
-                        .orElseThrow(() -> new UnitNotFoundException("Unit not found: " + riDto.getUnitAbbreviation()));
-
-                Ingredient ingredient = ingredientRepository.findByName(riDto.getIngredientName())
-                        .orElseGet(() -> {
-                            Ingredient newIng = new Ingredient();
-                            newIng.setName(riDto.getIngredientName());
-                            newIng.setUnit(unit);
-                            return ingredientRepository.save(newIng);
-                        });
-
-                RecipeIngredient recipeIngredient = new RecipeIngredient();
-                recipeIngredient.setRecipe(recipe);
-                recipeIngredient.setIngredient(ingredient);
-                recipeIngredient.setQuantity(riDto.getQuantity());
-                recipeIngredient.setUnit(unit);
-
-                recipeIngredients.add(recipeIngredient);
-            }
-            recipeIngredientRepository.saveAll(recipeIngredients);
         }
 
         return mapper.toRecipeDTO(recipe);
