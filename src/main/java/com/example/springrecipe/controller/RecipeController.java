@@ -31,9 +31,14 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.getAllRecipes());
     }
 
-    @GetMapping("/NPlusOne")
+    @GetMapping("/demo/NPlusOne")
     public ResponseEntity<List<RecipeDTO>> getAllRecipesWithNPlusOneProblem() {
         return ResponseEntity.ok(recipeService.getAllRecipesWithNPlusOneProblem());
+    }
+
+    @GetMapping("/solutionProblem")
+    public ResponseEntity<List<RecipeDTO>> getAllRecipesWithEntityGraph() {
+        return ResponseEntity.ok(recipeService.getAllRecipesWithEntityGraph());
     }
 
     @GetMapping("/{id}")
@@ -41,9 +46,9 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.getRecipeById(id));
     }
 
-    @GetMapping("/author/{authorEmail}")
-    public ResponseEntity<List<RecipeDTO>> getRecipesByAuthorEmail(@RequestParam String authorEmail) {
-        return ResponseEntity.ok(recipeService.getRecipesByAuthorEmail(authorEmail));
+    @GetMapping("/author/{authorId}")
+    public ResponseEntity<List<RecipeDTO>> getRecipesByAuthorId(@PathVariable long authorId) {
+        return ResponseEntity.ok(recipeService.getRecipesByAuthorId(authorId));
     }
 
     @GetMapping("/category/{categoryId}")

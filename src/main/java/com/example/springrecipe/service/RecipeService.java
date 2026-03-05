@@ -21,8 +21,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -37,16 +38,24 @@ public class RecipeService {
 
     @Transactional(readOnly = true)
     public List<RecipeDTO> getAllRecipesWithNPlusOneProblem() {
-        List<Recipe> recipe = recipeRepository.findAllWithDetails();
+        return recipeRepository.findAll()
+                .stream()
+                .map(mapper::toRecipeDTO)
+                .toList();
+    }
 
-        return recipeRepository.findAll().stream()
+    @Transactional(readOnly = true)
+    public List<RecipeDTO> getAllRecipesWithEntityGraph() {
+        return recipeRepository.findAllWithDetails()
+                .stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<RecipeDTO> getAllRecipes() {
-        return recipeRepository.findAllWithDetails().stream()
+        return recipeRepository.findAllWithDetails()
+                .stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
     }
@@ -59,15 +68,17 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public List<RecipeDTO> getRecipesByAuthorEmail(String authorEmail) {
-        return recipeRepository.findByAuthorEmail(authorEmail).stream()
+    public List<RecipeDTO> getRecipesByAuthorId(Long authorId) {
+        return recipeRepository.findByAuthorId(authorId)
+                .stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
     }
 
     @Transactional(readOnly = true)
     public List<RecipeDTO> getRecipesByCategory(Long categoryId) {
-        return recipeRepository.findByCategoryId(categoryId).stream()
+        return recipeRepository.findByCategoryId(categoryId)
+                .stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
     }
@@ -127,7 +138,7 @@ public class RecipeService {
             return;
         }
 
-        List<Ingredient> ingredients = new ArrayList<>();
+        Set<Ingredient> ingredients = new HashSet<>();
 
         for (IngredientDTO ingDto : ingredientDTOs) {
             Ingredient ingredient = ingredientRepository.findByName(ingDto.getName())

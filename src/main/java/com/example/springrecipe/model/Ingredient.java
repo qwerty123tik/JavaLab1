@@ -28,7 +28,7 @@ public class Ingredient {
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unit_id")
     private UnitOfMeasure unit;
 

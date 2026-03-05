@@ -14,8 +14,6 @@ import com.example.springrecipe.model.UnitOfMeasure;
 import com.example.springrecipe.model.User;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
 public class RecipeMapper {
 
@@ -47,16 +45,18 @@ public class RecipeMapper {
         }
 
         if (recipe.getIngredients() != null) {
-            dto.setIngredientNames(recipe.getIngredients().stream()
+            dto.setIngredientNames(recipe.getIngredients()
+                    .stream()
                     .map(Ingredient::getName)
-                    .collect(Collectors.toList()));
+                    .toList());
 
-            dto.setIngredients(recipe.getIngredients().stream()
+            dto.setIngredients(recipe.getIngredients()
+                    .stream()
                     .map(this::toIngredientDTO)
-                    .collect(Collectors.toList()));
+                    .toList());
         }
-
-        if (recipe.getReviews() != null && !recipe.getReviews().isEmpty()) {
+        dto.setAverageRating(0.0);
+        /*if (recipe.getReviews() != null) {
             double avg = recipe.getReviews().stream()
                     .mapToInt(Review::getRating)
                     .average()
@@ -64,7 +64,7 @@ public class RecipeMapper {
             dto.setAverageRating(Math.round(avg * 10) / 10.0);
         } else {
             dto.setAverageRating(0.0);
-        }
+        }*/
 
         return dto;
     }
