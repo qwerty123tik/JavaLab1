@@ -17,11 +17,12 @@ public class RecipeDTO {
 
     private String categoryName;
     private String authorName;
-    private List<String> ingredientNames;
     private Double averageRating;
 
     private Long categoryId;
     private Long authorId;
+
+    private List<RecipeIngredientDTO> recipeIngredients;
     private List<Long> ingredientIds;
-    private List<IngredientDTO> ingredients;
+    private List<String> ingredientNames;
 }

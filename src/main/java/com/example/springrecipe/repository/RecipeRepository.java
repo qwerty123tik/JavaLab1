@@ -16,10 +16,12 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     List<Recipe> findByCategoryId(Long categoryId);
 
-    @EntityGraph(attributePaths = {"category", "author", "ingredients", "ingredients.unit", "reviews"})
+    @EntityGraph(attributePaths = { "category", "author", "recipeIngredients", "recipeIngredients.ingredient",
+                                    "recipeIngredients.ingredient.unit", "reviews"})
     @Query("SELECT DISTINCT  r FROM Recipe r")
     List<Recipe> findAllWithDetails();
 
-    @EntityGraph(attributePaths = {"category", "author", "ingredients", "ingredients.unit", "reviews"})
+    @EntityGraph(attributePaths = {"category", "author", "recipeIngredients", "recipeIngredients.ingredient",
+                                   "recipeIngredients.ingredient.unit", "reviews"})
     Optional<Recipe> findById(Long id);
 }

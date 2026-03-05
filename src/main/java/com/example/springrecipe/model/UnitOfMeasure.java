@@ -1,5 +1,6 @@
 package com.example.springrecipe.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,5 +21,6 @@ public class UnitOfMeasure {
     private Long id;
 
     private String name;
+    @Column(unique = true)
     private String abbreviation;
 }

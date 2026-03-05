@@ -3,12 +3,14 @@ package com.example.springrecipe.mapper;
 import com.example.springrecipe.dto.CategoryDTO;
 import com.example.springrecipe.dto.IngredientDTO;
 import com.example.springrecipe.dto.RecipeDTO;
+import com.example.springrecipe.dto.RecipeIngredientDTO;
 import com.example.springrecipe.dto.ReviewDTO;
 import com.example.springrecipe.dto.UnitDTO;
 import com.example.springrecipe.dto.UserDTO;
 import com.example.springrecipe.model.Category;
 import com.example.springrecipe.model.Ingredient;
 import com.example.springrecipe.model.Recipe;
+import com.example.springrecipe.model.RecipeIngredient;
 import com.example.springrecipe.model.Review;
 import com.example.springrecipe.model.UnitOfMeasure;
 import com.example.springrecipe.model.User;
@@ -31,40 +33,56 @@ public class RecipeMapper {
         if (recipe.getCategory() != null) {
             dto.setCategoryId(recipe.getCategory().getId());
             dto.setCategoryName(recipe.getCategory().getName());
-        } else {
-            dto.setCategoryId(null);
-            dto.setCategoryName(null);
         }
 
         if (recipe.getAuthor() != null) {
             dto.setAuthorId(recipe.getAuthor().getId());
             dto.setAuthorName(recipe.getAuthor().getUserName());
-        } else {
-            dto.setAuthorId(null);
-            dto.setAuthorName(null);
         }
 
-        if (recipe.getIngredients() != null) {
-            dto.setIngredientNames(recipe.getIngredients()
+        if (recipe.getRecipeIngredients() != null && !recipe.getRecipeIngredients().isEmpty()) {
+            dto.setRecipeIngredients(recipe.getRecipeIngredients()
                     .stream()
-                    .map(Ingredient::getName)
+                    .map(this::toRecipeIngredientDTO)
                     .toList());
 
-            dto.setIngredients(recipe.getIngredients()
-                    .stream()
-                    .map(this::toIngredientDTO)
+            dto.setIngredientIds(recipe.getRecipeIngredients().stream()
+                    .map(ri -> ri.getIngredient().getId())
+                    .toList());
+
+            dto.setIngredientNames(recipe.getRecipeIngredients().stream()
+                    .map(ri -> ri.getIngredient().getName())
                     .toList());
         }
-        dto.setAverageRating(0.0);
-        /*if (recipe.getReviews() != null) {
-            double avg = recipe.getReviews().stream()
+
+        if (recipe.getReviews() != null && !recipe.getReviews().isEmpty()) {
+            double avg = recipe.getReviews()
+                    .stream()
                     .mapToInt(Review::getRating)
                     .average()
                     .orElse(0.0);
             dto.setAverageRating(Math.round(avg * 10) / 10.0);
         } else {
             dto.setAverageRating(0.0);
-        }*/
+        }
+
+        return dto;
+    }
+
+    public RecipeIngredientDTO toRecipeIngredientDTO(RecipeIngredient recipeIngredient) {
+        if (recipeIngredient == null) {
+            return null;
+        }
+
+        RecipeIngredientDTO dto = new RecipeIngredientDTO();
+        dto.setIngredientId(recipeIngredient.getIngredient().getId());
+        dto.setIngredientName(recipeIngredient.getIngredient().getName());
+        dto.setQuantity(recipeIngredient.getQuantity());
+
+        if (recipeIngredient.getUnit() != null) {
+            dto.setUnitAbbreviation(recipeIngredient.getUnit().getAbbreviation());
+            dto.setUnitName(recipeIngredient.getUnit().getName());
+        }
 
         return dto;
     }

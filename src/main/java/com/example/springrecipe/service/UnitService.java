@@ -1,6 +1,7 @@
 package com.example.springrecipe.service;
 
 import com.example.springrecipe.dto.UnitDTO;
+import com.example.springrecipe.exceptions.UnitNotFoundException;
 import com.example.springrecipe.mapper.RecipeMapper;
 import com.example.springrecipe.model.UnitOfMeasure;
 import com.example.springrecipe.repository.UnitRepository;
@@ -30,5 +31,13 @@ public class UnitService {
 
         unit = unitRepository.save(unit);
         return mapper.toUnitDto(unit);
+    }
+
+    @Transactional
+    public void deleteUnit(Long id) {
+        if (!unitRepository.existsById(id)) {
+            throw new UnitNotFoundException("Unit not found");
+        }
+        unitRepository.deleteById(id);
     }
 }

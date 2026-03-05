@@ -1,40 +1,47 @@
 package com.example.springrecipe.model;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.util.HashSet;
-import java.util.Set;
+import lombok.ToString;
 
 @Entity
-@Table(name = "ingredients")
+@Table(name = "recipe_ingredients")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Ingredient {
+public class RecipeIngredient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String name;
+    @ManyToOne
+    @JoinColumn(name = "recipe_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Recipe recipe;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "ingredient_id", nullable = false)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Ingredient ingredient;
+
+    @Column(nullable = false)
+    private Double quantity;
+
+    @ManyToOne
     @JoinColumn(name = "unit_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private UnitOfMeasure unit;
-
-    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
-    private Set<RecipeIngredient> recipeIngredients = new HashSet<>();
 }
