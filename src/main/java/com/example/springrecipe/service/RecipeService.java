@@ -93,7 +93,7 @@ public class RecipeService {
                 .orElseThrow(() -> new UserNotFoundException("Author not found"));
 
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(CategoryNotFoundException.DEFAULT_MESSAGE));
 
         Recipe recipe = new Recipe();
         recipe.setName(dto.getName());
@@ -145,7 +145,7 @@ public class RecipeService {
                 .orElseThrow(() -> new UserNotFoundException("Author not found"));
 
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(CategoryNotFoundException.DEFAULT_MESSAGE));
 
         Recipe recipe = new Recipe();
         recipe.setName(dto.getName());
@@ -200,7 +200,7 @@ public class RecipeService {
 
         if (dto.getCategoryId() != null) {
             Category category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
+                    .orElseThrow(() -> new CategoryNotFoundException(CategoryNotFoundException.DEFAULT_MESSAGE));
             recipe.setCategory(category);
         }
 

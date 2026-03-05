@@ -62,7 +62,7 @@ public class RecipeController {
     }
 
     @PostMapping("/demo/withoutTransaction")
-    public ResponseEntity<?> createRecipeWithoutTransaction(@RequestBody RecipeDTO dto) {
+    public ResponseEntity<Object> createRecipeWithoutTransaction(@RequestBody RecipeDTO dto) {
         try {
             recipeService.createRecipeWithoutTransaction(dto);
             return ResponseEntity.ok("Рецепт создан");
@@ -74,7 +74,7 @@ public class RecipeController {
     }
 
     @PostMapping("/demo/withTransaction")
-    public ResponseEntity<?> createRecipeWithTransaction(@RequestBody RecipeDTO dto) {
+    public ResponseEntity<Object> createRecipeWithTransaction(@RequestBody RecipeDTO dto) {
         try {
             recipeService.createRecipe(dto);  // Ваш существующий метод
             return ResponseEntity.ok("Рецепт создан");
