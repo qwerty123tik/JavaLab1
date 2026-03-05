@@ -101,7 +101,6 @@ public class RecipeService {
         recipe.setCookingTime(dto.getCookingTime());
         recipe.setAuthor(author);
         recipe.setCategory(category);
-
         recipe = recipeRepository.save(recipe);
 
         if (dto.getRecipeIngredients() != null && !dto.getRecipeIngredients().isEmpty()) {
@@ -112,27 +111,18 @@ public class RecipeService {
                     throw new IllegalArgumentException("Ingredient name is required");
                 }
 
+                UnitOfMeasure unit = (riDto.getUnitAbbreviation() == null || riDto.getUnitAbbreviation().isEmpty())
+                        ? null
+                        : unitRepository.findByAbbreviation(riDto.getUnitAbbreviation())
+                        .orElseThrow(() -> new UnitNotFoundException("Unit not found: " + riDto.getUnitAbbreviation()));
+
                 Ingredient ingredient = ingredientRepository.findByName(riDto.getIngredientName())
                         .orElseGet(() -> {
-                            Ingredient newIngredient = new Ingredient();
-                            newIngredient.setName(riDto.getIngredientName());
-
-                            if (riDto.getUnitAbbreviation() != null && !riDto.getUnitAbbreviation().isEmpty()) {
-                                UnitOfMeasure unit = unitRepository.findByAbbreviation(riDto.getUnitAbbreviation())
-                                        .orElseThrow(() -> new UnitNotFoundException(
-                                                "Unit not found with abbreviation: " + riDto.getUnitAbbreviation()));
-                                newIngredient.setUnit(unit);
-                            }
-
-                            return ingredientRepository.save(newIngredient);
+                            Ingredient newIng = new Ingredient();
+                            newIng.setName(riDto.getIngredientName());
+                            newIng.setUnit(unit);
+                            return ingredientRepository.save(newIng);
                         });
-
-                UnitOfMeasure unit = null;
-                if (riDto.getUnitAbbreviation() != null && !riDto.getUnitAbbreviation().isEmpty()) {
-                    unit = unitRepository.findByAbbreviation(riDto.getUnitAbbreviation())
-                            .orElseThrow(() -> new UnitNotFoundException(
-                                    "Unit not found with abbreviation: " + riDto.getUnitAbbreviation()));
-                }
 
                 RecipeIngredient recipeIngredient = new RecipeIngredient();
                 recipeIngredient.setRecipe(recipe);
