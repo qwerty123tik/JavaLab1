@@ -72,6 +72,10 @@ public class IngredientService {
         if (!ingredientRepository.existsById(id)) {
             throw new IngredientNotFoundException("Ingredient not found");
         }
+
+        if (ingredientRepository.isIngredientUsedInAnyRecipe(id)) {
+            throw new IngredientNotFoundException("Ingredient can not be deleted because it is used in recipe");
+        }
         ingredientRepository.deleteById(id);
     }
 }
