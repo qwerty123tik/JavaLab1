@@ -69,19 +69,19 @@ public class RecipeController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка: " + e.getMessage() +
-                            "\nНО! Рецепт мог сохраниться в БД! Проверьте таблицу recipes.");
+                            "\nно! Рецепт мог сохраниться в БД. Проверьте таблицу recipes.");
         }
     }
 
     @PostMapping("/demo/withTransaction")
     public ResponseEntity<Object> createRecipeWithTransaction(@RequestBody RecipeDTO dto) {
         try {
-            recipeService.createRecipe(dto);  // Ваш существующий метод
+            recipeService.createRecipe(dto);
             return ResponseEntity.ok("Рецепт создан");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка: " + e.getMessage() +
-                            "\nБлагодаря @Transactional НИЧЕГО не сохранилось!");
+                            "\nблагодаря @Transactional нисего не сохранилось!");
         }
     }
 
