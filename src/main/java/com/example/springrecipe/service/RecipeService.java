@@ -1,5 +1,6 @@
 package com.example.springrecipe.service;
 
+import com.example.springrecipe.cache.RecipeCacheKey;
 import com.example.springrecipe.dto.RecipeDTO;
 import com.example.springrecipe.dto.RecipeIngredientDTO;
 import com.example.springrecipe.exceptions.CategoryNotFoundException;
@@ -21,13 +22,20 @@ import com.example.springrecipe.repository.RecipeRepository;
 import com.example.springrecipe.repository.UnitRepository;
 import com.example.springrecipe.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecipeService {
@@ -39,6 +47,10 @@ public class RecipeService {
     private final UnitRepository unitRepository;
     private final RecipeIngredientRepository recipeIngredientRepository;
     private final RecipeMapper mapper;
+
+    private final Map<RecipeCacheKey, Page<RecipeDTO>> recipeCache = new ConcurrentHashMap<>();
+    private final Map<RecipeCacheKey, Integer> cacheHitCount = new HashMap<>();
+    private volatile boolean dataChanged = false;
 
     @Transactional(readOnly = true)
     public List<RecipeDTO> getAllRecipesWithNPlusOneProblem() {
@@ -54,6 +66,87 @@ public class RecipeService {
                 .stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RecipeDTO> searchRecipesJPQL(String ingredientName, Pageable pageable) {
+        RecipeCacheKey cacheKey = new RecipeCacheKey(
+                ingredientName,
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort().toString().contains(":")
+                        ? pageable.getSort().toString().split(":")[0].trim()
+                        : "name",
+                pageable.getSort().toString().contains("DESC") ? "DESC" : "ASC"
+        );
+        log.info("Поиск рецептов с ключом: {}", cacheKey);
+
+        if (recipeCache.containsKey(cacheKey)) {
+            log.info("ДАННЫЕ НАЙДЕНЫ В КЭШЕ! (cache hit)");
+
+            cacheHitCount.merge(cacheKey, 1, Integer::sum);
+
+            return recipeCache.get(cacheKey);
+        }
+
+        log.info("ДАННЫХ НЕТ В КЭШЕ, выполняем запрос к БД (cache miss)");
+        Page<Recipe> recipePage = recipeRepository.findByIngredientNameJPQL(ingredientName, pageable);
+        Page<RecipeDTO> resultPage = recipePage.map(mapper::toRecipeDTO);
+
+        recipeCache.put(cacheKey, resultPage);
+        log.info("Результат сохранен в кэш. Размер кэша: {}", recipeCache.size());
+
+        return resultPage;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RecipeDTO> searchRecipesNative(String ingredientName, Pageable pageable) {
+        RecipeCacheKey cacheKey = new RecipeCacheKey(
+                "native_" + ingredientName,
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSort().toString().contains(":")
+                        ? pageable.getSort().toString().split(":")[0].trim()
+                        : "name",
+                pageable.getSort().toString().contains("DESC") ? "DESC" : "ASC"
+        );
+
+        if (recipeCache.containsKey(cacheKey)) {
+            log.info("Native: данные найдены в кэше");
+            return recipeCache.get(cacheKey);
+        }
+
+        Page<Recipe> recipePage = recipeRepository.findByIngredientNameWithNative(ingredientName, pageable);
+        Page<RecipeDTO> resultPage = recipePage.map(mapper::toRecipeDTO);
+
+        recipeCache.put(cacheKey, resultPage);
+        return resultPage;
+    }
+
+    private void invalidateCache() {
+        log.info("ИНВАЛИДАЦИЯ КЭША: очищаем {} записей", recipeCache.size());
+        recipeCache.clear();
+        cacheHitCount.clear();
+        dataChanged = true;
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, Object> getCacheStatistics() {
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("cacheSize", recipeCache.size());
+        stats.put("cacheKeys", recipeCache.keySet().stream()
+                .map(key -> String.format(
+                        "ingredient=%s, page=%d, size=%d, sort=%s %s",
+                        key.getIngredientName(),
+                        key.getPageNumber(),
+                        key.getPageSize(),
+                        key.getSortBy(),
+                        key.getSortDirection()))
+                .toList());
+        stats.put("cacheHits", cacheHitCount.values().stream().mapToInt(Integer::intValue).sum());
+        stats.put("hitDetails", cacheHitCount);
+        stats.put("dataChanged", dataChanged);
+        return stats;
     }
 
     @Transactional(readOnly = true)
@@ -89,7 +182,9 @@ public class RecipeService {
 
     @Transactional
     public RecipeDTO createRecipe(RecipeDTO dto) {
-        return executeRecipeCreation(dto);
+        RecipeDTO result = executeRecipeCreation(dto);
+        invalidateCache();
+        return result;
     }
 
     public RecipeDTO createRecipeWithoutTransaction(RecipeDTO dto) {
@@ -186,6 +281,7 @@ public class RecipeService {
         }
 
         recipe = recipeRepository.save(recipe);
+        invalidateCache();
         return mapper.toRecipeDTO(recipe);
     }
 
@@ -195,5 +291,6 @@ public class RecipeService {
             throw new RecipeNotFoundException("Recipe not found");
         }
         recipeRepository.deleteById(id);
+        invalidateCache();
     }
 }

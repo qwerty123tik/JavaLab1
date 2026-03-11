@@ -3,6 +3,9 @@ package com.example.springrecipe.controller;
 import com.example.springrecipe.dto.RecipeDTO;
 import com.example.springrecipe.service.RecipeService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/recipes")
@@ -39,6 +43,34 @@ public class RecipeController {
     @GetMapping("/solutionProblem")
     public ResponseEntity<List<RecipeDTO>> getAllRecipesWithEntityGraph() {
         return ResponseEntity.ok(recipeService.getAllRecipesWithEntityGraph());
+    }
+
+    @GetMapping("/search/jpql")
+    public ResponseEntity<Page<RecipeDTO>> searchRecipesJPQL(
+            @RequestParam(required = false) String ingredient,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+
+        Page<RecipeDTO> result = recipeService.searchRecipesJPQL(ingredient, pageable);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/search/native")
+    public ResponseEntity<Page<RecipeDTO>> searchRecipesNative(
+            @RequestParam(required = false) String ingredient,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+
+        Page<RecipeDTO> result = recipeService.searchRecipesNative(ingredient, pageable);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/cache/invalidate")
+    public ResponseEntity<String> invalidateCache() {
+        return ResponseEntity.ok("Кэш успешно инвалидирован. При следующем поиске данные будут загружены из БД.");
+    }
+
+    @GetMapping("/cache/stats")
+    public ResponseEntity<Map<String, Object>> getCacheStats() {
+        return ResponseEntity.ok(recipeService.getCacheStatistics());
     }
 
     @GetMapping("/{id}")
