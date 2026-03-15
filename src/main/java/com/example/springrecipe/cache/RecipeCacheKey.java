@@ -9,6 +9,7 @@ import java.util.Objects;
 @AllArgsConstructor
 public class RecipeCacheKey {
     private String ingredientName;
+    private String categoryName;
     private int pageNumber;
     private int pageSize;
     private String sortBy;
@@ -25,12 +26,13 @@ public class RecipeCacheKey {
 
         RecipeCacheKey that = (RecipeCacheKey) o;
         return Objects.equals(ingredientName, that.ingredientName) &&
+                Objects.equals(categoryName, that.categoryName) &&
                 Objects.equals(pageNumber, that.pageNumber) &&
                 Objects.equals(pageSize, that.pageSize);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ingredientName, pageNumber, pageSize);
+        return Objects.hash(ingredientName, categoryName, pageNumber, pageSize);
     }
 }

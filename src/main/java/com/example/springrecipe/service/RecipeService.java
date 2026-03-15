@@ -69,9 +69,10 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<RecipeDTO> searchRecipesJPQL(String ingredientName, Pageable pageable) {
+    public Page<RecipeDTO> searchRecipesJPQL(String ingredientName, String categoryName, Pageable pageable) {
         RecipeCacheKey cacheKey = new RecipeCacheKey(
                 ingredientName,
+                categoryName,
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 pageable.getSort().toString().contains(":")
@@ -82,15 +83,13 @@ public class RecipeService {
         log.info("Поиск рецептов с ключом: {}", cacheKey);
 
         if (recipeCache.containsKey(cacheKey)) {
-            log.info("ДАННЫЕ НАЙДЕНЫ В КЭШЕ! (cache hit)");
-
+            log.info("ДАННЫЕ НАЙДЕНЫ В КЭШЕ!");
             cacheHitCount.merge(cacheKey, 1, Integer::sum);
-
             return recipeCache.get(cacheKey);
         }
 
-        log.info("ДАННЫХ НЕТ В КЭШЕ, выполняем запрос к БД (cache miss)");
-        Page<Recipe> recipePage = recipeRepository.findByIngredientNameJPQL(ingredientName, pageable);
+        log.info("ДАННЫХ НЕТ В КЭШЕ, выполняем запрос к БД");
+        Page<Recipe> recipePage = recipeRepository.findByJPQL(ingredientName, categoryName, pageable);
         Page<RecipeDTO> resultPage = recipePage.map(mapper::toRecipeDTO);
 
         recipeCache.put(cacheKey, resultPage);
@@ -100,9 +99,10 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<RecipeDTO> searchRecipesNative(String ingredientName, Pageable pageable) {
+    public Page<RecipeDTO> searchRecipesNative(String ingredientName, String categoryName, Pageable pageable) {
         RecipeCacheKey cacheKey = new RecipeCacheKey(
                 "native_" + ingredientName,
+                categoryName,
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
                 pageable.getSort().toString().contains(":")
@@ -116,7 +116,7 @@ public class RecipeService {
             return recipeCache.get(cacheKey);
         }
 
-        Page<Recipe> recipePage = recipeRepository.findByIngredientNameWithNative(ingredientName, pageable);
+        Page<Recipe> recipePage = recipeRepository.findByNative(ingredientName, categoryName, pageable);
         Page<RecipeDTO> resultPage = recipePage.map(mapper::toRecipeDTO);
 
         recipeCache.put(cacheKey, resultPage);

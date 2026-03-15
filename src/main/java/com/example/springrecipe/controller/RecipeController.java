@@ -48,18 +48,23 @@ public class RecipeController {
     @GetMapping("/search/jpql")
     public ResponseEntity<Page<RecipeDTO>> searchRecipesJPQL(
             @RequestParam(required = false) String ingredient,
+            @RequestParam(required = false) String category,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
 
-        Page<RecipeDTO> result = recipeService.searchRecipesJPQL(ingredient, pageable);
+        String ingredientParam = (ingredient == null || ingredient.isEmpty()) ? null : ingredient;
+        String categoryParam = (category == null || category.isEmpty()) ? null : category;
+
+        Page<RecipeDTO> result = recipeService.searchRecipesJPQL(ingredientParam, categoryParam, pageable);
         return ResponseEntity.ok(result);
     }
 
     @GetMapping("/search/native")
     public ResponseEntity<Page<RecipeDTO>> searchRecipesNative(
             @RequestParam(required = false) String ingredient,
+            @RequestParam(required = false) String category,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
 
-        Page<RecipeDTO> result = recipeService.searchRecipesNative(ingredient, pageable);
+        Page<RecipeDTO> result = recipeService.searchRecipesNative(ingredient, category, pageable);
         return ResponseEntity.ok(result);
     }
 
