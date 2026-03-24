@@ -124,14 +124,17 @@ public class RecipeService {
     }
 
     private void invalidateCache() {
-        log.info("ИНВАЛИДАЦИЯ КЭША: очищаем {} записей", recipeCache.size());
+        log.warn("ИНВАЛИДАЦИЯ КЭША: очищаем {} записей", recipeCache.size());
+        log.debug("Детали инвалидации: cacheKeys = {}", recipeCache.keySet());
         recipeCache.clear();
         cacheHitCount.clear();
         dataChanged = true;
+        log.info("Кэш успешно инвалидирован");
     }
 
     @Transactional(readOnly = true)
     public Map<String, Object> getCacheStatistics() {
+        log.debug("Запрос статистики кэша");
         Map<String, Object> stats = new HashMap<>();
         stats.put("cacheSize", recipeCache.size());
         stats.put("cacheKeys", recipeCache.keySet().stream()
@@ -146,45 +149,86 @@ public class RecipeService {
         stats.put("cacheHits", cacheHitCount.values().stream().mapToInt(Integer::intValue).sum());
         stats.put("hitDetails", cacheHitCount);
         stats.put("dataChanged", dataChanged);
+        log.info("Статистика кэша: размер={}, хиты={}", recipeCache.size(),
+                cacheHitCount.values().stream().mapToInt(Integer::intValue).sum());
         return stats;
     }
 
     @Transactional(readOnly = true)
     public List<RecipeDTO> getAllRecipes() {
-        return recipeRepository.findAllWithDetails()
+        log.debug("Вызов метода getAllRecipes");
+
+        List<RecipeDTO> result = recipeRepository.findAllWithDetails()
                 .stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
+
+        log.info("getAllRecipes: найдено {} рецептов", result.size());
+
+        return result;
     }
 
     @Transactional(readOnly = true)
     public RecipeDTO getRecipeById(Long id) {
+        log.debug("Поиск рецепта по ID: {}", id);
         Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + id));
+                .orElseThrow(() -> {
+                    log.warn("Рецепт с ID {} не найден", id);
+                    return new RecipeNotFoundException("Recipe not found with id: " + id);
+                });
+
+        log.info("Найден рецепт: {} (ID: {})", recipe.getName(), recipe.getId());
         return mapper.toRecipeDTO(recipe);
     }
 
     @Transactional(readOnly = true)
     public List<RecipeDTO> getRecipesByAuthorId(Long authorId) {
-        return recipeRepository.findByAuthorId(authorId)
+        log.debug("Поиск рецептов автора с ID: {}", authorId);
+
+        List<RecipeDTO> result = recipeRepository.findByAuthorId(authorId)
                 .stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
+
+        log.info("Найдено {} рецептов для автора ID {}", result.size(), authorId);
+
+        return result;
     }
 
     @Transactional(readOnly = true)
     public List<RecipeDTO> getRecipesByCategory(Long categoryId) {
-        return recipeRepository.findByCategoryId(categoryId)
+        log.debug("Поиск рецептов в категории с ID: {}", categoryId);
+
+        List<RecipeDTO> result = recipeRepository.findByCategoryId(categoryId)
                 .stream()
                 .map(mapper::toRecipeDTO)
                 .toList();
+
+        log.info("Найдено {} рецептов в категории ID {}", result.size(), categoryId);
+
+        return result;
     }
 
     @Transactional
     public RecipeDTO createRecipe(RecipeDTO dto) {
-        RecipeDTO result = executeRecipeCreation(dto);
-        invalidateCache();
-        return result;
+        log.info("СОЗДАНИЕ НОВОГО РЕЦЕПТА: название='{}', авторId={}, категорияId={}",
+                dto.getName(), dto.getAuthorId(), dto.getCategoryId());
+        log.debug("Детали рецепта: {}", dto);
+
+        try {
+            RecipeDTO result = executeRecipeCreation(dto);
+
+            log.info("Рецепт успешно создан: ID={}, название='{}'",
+                    result.getId(), result.getName());
+
+            invalidateCache();
+            log.debug("Кэш инвалидирован после создания рецепта");
+
+            return result;
+        } catch (Exception e) {
+            log.error("Ошибка при создании рецепта '{}': {}", dto.getName(), e.getMessage(), e);
+            throw e;
+        }
     }
 
     public RecipeDTO createRecipeWithoutTransaction(RecipeDTO dto) {
@@ -192,11 +236,21 @@ public class RecipeService {
     }
 
     private RecipeDTO executeRecipeCreation(RecipeDTO dto) {
+        log.debug("Поиск автора с ID: {}", dto.getAuthorId());
         User author = userRepository.findById(dto.getAuthorId())
-                .orElseThrow(() -> new UserNotFoundException("Author not found"));
+                .orElseThrow(() -> {
+                    log.error("Автор с ID {} не найден", dto.getAuthorId());
+                    return new UserNotFoundException("Author not found");
+                });
+        log.debug("Автор найден: {}", author.getUserName());
 
+        log.debug("Поиск категории с ID: {}", dto.getCategoryId());
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new CategoryNotFoundException(CategoryNotFoundException.DEFAULT_MESSAGE));
+                .orElseThrow(() -> {
+                    log.error("Категория с ID {} не найдена", dto.getCategoryId());
+                    return new CategoryNotFoundException("Category not found");
+                });
+        log.debug("Категория найдена: {}", category.getName());
 
         Recipe recipe = new Recipe();
         recipe.setName(dto.getName());
@@ -205,22 +259,30 @@ public class RecipeService {
         recipe.setAuthor(author);
         recipe.setCategory(category);
         recipe = recipeRepository.save(recipe);
+        log.debug("Рецепт сохранен в БД с ID: {}", recipe.getId());
 
         if (dto.getRecipeIngredients() != null && !dto.getRecipeIngredients().isEmpty()) {
+            log.debug("Обработка ингредиентов: {} шт", dto.getRecipeIngredients().size());
             Set<RecipeIngredient> recipeIngredients = new HashSet<>();
 
             for (RecipeIngredientDTO riDto : dto.getRecipeIngredients()) {
                 if (riDto.getIngredientName() == null || riDto.getIngredientName().isEmpty()) {
+                    log.warn("Пропущен ингредиент с пустым названием");
                     throw new IllegalArgumentException("Ingredient name is required");
                 }
 
+                log.debug("Обработка ингредиента: {}", riDto.getIngredientName());
                 UnitOfMeasure unit = (riDto.getUnitAbbreviation() == null || riDto.getUnitAbbreviation().isEmpty())
                         ? null
                         : unitRepository.findByAbbreviation(riDto.getUnitAbbreviation())
-                        .orElseThrow(() -> new UnitNotFoundException("Unit not found: " + riDto.getUnitAbbreviation()));
+                        .orElseThrow(() -> {
+                            log.error("Единица измерения '{}' не найдена", riDto.getUnitAbbreviation());
+                            return new UnitNotFoundException("Unit not found: " + riDto.getUnitAbbreviation());
+                        });
 
                 Ingredient ingredient = ingredientRepository.findByName(riDto.getIngredientName())
                         .orElseGet(() -> {
+                            log.info("Создание нового ингредиента: {}", riDto.getIngredientName());
                             Ingredient newIng = new Ingredient();
                             newIng.setName(riDto.getIngredientName());
                             newIng.setUnit(unit);
@@ -234,10 +296,12 @@ public class RecipeService {
                 recipeIngredient.setUnit(unit);
 
                 recipeIngredients.add(recipeIngredient);
+                log.debug("Ингредиент '{}' добавлен в количестве {}", ingredient.getName(), riDto.getQuantity());
             }
 
             recipeIngredientRepository.saveAll(recipeIngredients);
             recipe.setRecipeIngredients(recipeIngredients);
+            log.debug("Сохранено {} ингредиентов для рецепта", recipeIngredients.size());
         }
 
         return mapper.toRecipeDTO(recipe);
@@ -245,17 +309,24 @@ public class RecipeService {
 
     @Transactional
     public RecipeDTO updateRecipe(Long id, RecipeDTO dto) {
+        log.info("ОБНОВЛЕНИЕ РЕЦЕПТА: ID={}, название='{}'", id, dto.getName());
         Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found"));
+                .orElseThrow(() -> {
+                    log.warn("Рецепт с ID {} не найден для обновления", id);
+                    return new RecipeNotFoundException("Recipe not found");
+                });
 
+        String oldName = recipe.getName();
         recipe.setName(dto.getName());
         recipe.setDescription(dto.getDescription());
         recipe.setCookingTime(dto.getCookingTime());
+        log.debug("Основные поля обновлены: название '{}' -> '{}'", oldName, dto.getName());
 
         if (dto.getCategoryId() != null) {
             Category category = categoryRepository.findById(dto.getCategoryId())
-                    .orElseThrow(() -> new CategoryNotFoundException(CategoryNotFoundException.DEFAULT_MESSAGE));
+                    .orElseThrow(() -> new CategoryNotFoundException("Category not found"));
             recipe.setCategory(category);
+            log.debug("Обновлена категория: {}", category.getName());
         }
 
         if (dto.getRecipeIngredients() != null && !dto.getRecipeIngredients().isEmpty()) {
@@ -278,19 +349,33 @@ public class RecipeService {
 
             recipeIngredientRepository.saveAll(recipeIngredients);
             recipe.setRecipeIngredients(recipeIngredients);
+            log.debug("Добавлено {} новых ингредиентов", recipeIngredients.size());
         }
 
         recipe = recipeRepository.save(recipe);
+        log.info("Рецепт ID={} успешно обновлен", id);
         invalidateCache();
+        log.debug("Кэш инвалидирован после обновления");
         return mapper.toRecipeDTO(recipe);
     }
 
     @Transactional
     public void deleteRecipe(Long id) {
-        if (!recipeRepository.existsById(id)) {
-            throw new RecipeNotFoundException("Recipe not found");
+        log.warn("УДАЛЕНИЕ РЕЦЕПТА: ID={}", id);
+
+        try {
+            if (!recipeRepository.existsById(id)) {
+                log.warn("Попытка удалить несуществующий рецепт с ID={}", id);
+                throw new RecipeNotFoundException("Recipe not found");
+            }
+            recipeRepository.deleteById(id);
+
+            log.info("Рецепт ID={} успешно удален", id);
+            invalidateCache();
+            log.debug("Кэш инвалидирован после удаления");
+        } catch (Exception e) {
+            log.error("Ошибка при удалении рецепта ID={}: {}", id, e.getMessage(), e);
+            throw e;
         }
-        recipeRepository.deleteById(id);
-        invalidateCache();
     }
 }

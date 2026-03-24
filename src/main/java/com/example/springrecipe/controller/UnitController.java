@@ -2,6 +2,7 @@ package com.example.springrecipe.controller;
 
 import com.example.springrecipe.dto.UnitDTO;
 import com.example.springrecipe.service.UnitService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class UnitController {
     }
 
     @PostMapping
-    public ResponseEntity<UnitDTO> createUnit(@RequestBody UnitDTO dto) {
+    public ResponseEntity<UnitDTO> createUnit(@Valid @RequestBody UnitDTO dto) {
         return new ResponseEntity<>(unitService.createUnit(dto), HttpStatus.CREATED);
     }
 

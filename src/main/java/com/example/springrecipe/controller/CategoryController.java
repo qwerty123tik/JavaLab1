@@ -2,6 +2,7 @@ package com.example.springrecipe.controller;
 
 import com.example.springrecipe.dto.CategoryDTO;
 import com.example.springrecipe.service.CategoryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO dto) {
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO dto) {
         return new ResponseEntity<>(categoryService.createCategory(dto), HttpStatus.CREATED);
     }
 

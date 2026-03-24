@@ -2,6 +2,7 @@ package com.example.springrecipe.controller;
 
 import com.example.springrecipe.dto.RecipeDTO;
 import com.example.springrecipe.service.RecipeService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,11 @@ public class RecipeController {
                                                           @RequestParam(required = false) String title) {
 
         return ResponseEntity.ok(recipeService.getAllRecipes());
+    }
+
+    @GetMapping("/test-error")
+    public ResponseEntity<String> testError() {
+        throw new RuntimeException("Тестовая ошибка сервера");
     }
 
     @GetMapping("/demo/NPlusOne")
@@ -94,12 +100,12 @@ public class RecipeController {
     }
 
     @PostMapping
-    public ResponseEntity<RecipeDTO> createRecipe(@RequestBody RecipeDTO dto) {
+    public ResponseEntity<RecipeDTO> createRecipe(@Valid @RequestBody RecipeDTO dto) {
         return new ResponseEntity<>(recipeService.createRecipe(dto), HttpStatus.CREATED);
     }
 
     @PostMapping("/demo/withoutTransaction")
-    public ResponseEntity<Object> createRecipeWithoutTransaction(@RequestBody RecipeDTO dto) {
+    public ResponseEntity<Object> createRecipeWithoutTransaction(@Valid @RequestBody RecipeDTO dto) {
         try {
             recipeService.createRecipeWithoutTransaction(dto);
             return ResponseEntity.ok("Рецепт создан");
@@ -111,7 +117,7 @@ public class RecipeController {
     }
 
     @PostMapping("/demo/withTransaction")
-    public ResponseEntity<Object> createRecipeWithTransaction(@RequestBody RecipeDTO dto) {
+    public ResponseEntity<Object> createRecipeWithTransaction(@Valid @RequestBody RecipeDTO dto) {
         try {
             recipeService.createRecipe(dto);
             return ResponseEntity.ok("Рецепт создан");
@@ -123,7 +129,7 @@ public class RecipeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RecipeDTO> updateRecipe(@PathVariable Long id, @RequestBody RecipeDTO dto) {
+    public ResponseEntity<RecipeDTO> updateRecipe(@PathVariable Long id, @Valid @RequestBody RecipeDTO dto) {
         return ResponseEntity.ok(recipeService.updateRecipe(id, dto));
     }
 

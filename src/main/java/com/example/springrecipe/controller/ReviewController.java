@@ -2,6 +2,7 @@ package com.example.springrecipe.controller;
 
 import com.example.springrecipe.dto.ReviewDTO;
 import com.example.springrecipe.service.ReviewService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,12 +44,12 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<ReviewDTO> createReview(@RequestBody ReviewDTO dto) {
+    public ResponseEntity<ReviewDTO> createReview(@Valid @RequestBody ReviewDTO dto) {
         return new ResponseEntity<>(reviewService.createReview(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO dto) {
+    public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewDTO dto) {
         return ResponseEntity.ok(reviewService.updateReview(id, dto));
     }
 
