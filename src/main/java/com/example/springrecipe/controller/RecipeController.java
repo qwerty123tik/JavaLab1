@@ -2,6 +2,12 @@ package com.example.springrecipe.controller;
 
 import com.example.springrecipe.dto.RecipeDTO;
 import com.example.springrecipe.service.RecipeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,30 +31,57 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/recipes")
 @AllArgsConstructor
+@Tag(name = "Рецепты", description = "Управление рецептами (CRUD, поиск, пагинация, кэширование)")
 public class RecipeController {
     private final RecipeService recipeService;
 
+    @Operation(
+            summary = "Получить все рецепты",
+            description = "Возвращает список всех рецептов с пагинацией и сортировкой"
+    )
+    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Успешно получен список рецептов"),
+                            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+                                    content = @Content)
+    })
     @GetMapping
-    public ResponseEntity<List<RecipeDTO>> getAllRecipes( @RequestParam(required = false) Integer maxTime,
+    public ResponseEntity<List<RecipeDTO>> getAllRecipes(
+            @Parameter(description = "Максимальное время приготовления в минутах")
+                                                          @RequestParam(required = false) Integer maxTime,
+                                                          @Parameter(description = "ID категории")
                                                           @RequestParam(required = false) Long categoryId,
+                                                          @Parameter(description = "Название рецепта")
                                                           @RequestParam(required = false) String title) {
 
         return ResponseEntity.ok(recipeService.getAllRecipes());
     }
 
+    @Operation(
+            summary = "Демонстрация проблемы N+1",
+            description = "Возвращает список рецептов с проблемой N+1 (много запросов к БД)"
+    )
     @GetMapping("/demo/NPlusOne")
     public ResponseEntity<List<RecipeDTO>> getAllRecipesWithNPlusOneProblem() {
         return ResponseEntity.ok(recipeService.getAllRecipesWithNPlusOneProblem());
     }
 
+    @Operation(
+            summary = "Решение проблемы N+1 через EntityGraph",
+            description = "Возвращает список рецептов с оптимизированным запросом (один запрос к БД)"
+    )
     @GetMapping("/solutionProblem")
     public ResponseEntity<List<RecipeDTO>> getAllRecipesWithEntityGraph() {
         return ResponseEntity.ok(recipeService.getAllRecipesWithEntityGraph());
     }
 
+    @Operation(
+            summary = "Поиск рецептов (JPQL)",
+            description = "Поиск рецептов по ингредиенту и/или категории с пагинацией"
+    )
     @GetMapping("/search/jpql")
     public ResponseEntity<Page<RecipeDTO>> searchRecipesJPQL(
+            @Parameter(description = "Название ингредиента (частичное совпадение)")
             @RequestParam(required = false) String ingredient,
+            @Parameter(description = "Название категории (частичное совпадение)")
             @RequestParam(required = false) String category,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
 
@@ -59,9 +92,15 @@ public class RecipeController {
         return ResponseEntity.ok(result);
     }
 
+    @Operation(
+            summary = "Поиск рецептов (Native SQL)",
+            description = "Поиск рецептов с использованием нативного SQL запроса"
+    )
     @GetMapping("/search/native")
     public ResponseEntity<Page<RecipeDTO>> searchRecipesNative(
+            @Parameter(description = "Название ингредиента")
             @RequestParam(required = false) String ingredient,
+            @Parameter(description = "Название категории")
             @RequestParam(required = false) String category,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
 
@@ -69,36 +108,75 @@ public class RecipeController {
         return ResponseEntity.ok(result);
     }
 
+    @Operation(
+            summary = "Очистить кэш",
+            description = "Принудительная инвалидация in-memory кэша"
+    )
     @PostMapping("/cache/invalidate")
     public ResponseEntity<String> invalidateCache() {
         return ResponseEntity.ok("Кэш успешно инвалидирован. При следующем поиске данные будут загружены из БД.");
     }
 
+    @Operation(
+            summary = "Статистика кэша",
+            description = "Возвращает статистику in-memory кэша: размер, ключи, количество хитов"
+    )
     @GetMapping("/cache/stats")
     public ResponseEntity<Map<String, Object>> getCacheStats() {
         return ResponseEntity.ok(recipeService.getCacheStatistics());
     }
 
+    @Operation(
+            summary = "Получить рецепт по ID",
+            description = "Возвращает полную информацию о рецепте по его идентификатору"
+    )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Рецепт найден"),
+                           @ApiResponse(responseCode = "404", description = "Рецепт не найден", content = @Content)
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<RecipeDTO> getRecipeById(@PathVariable Long id) {
+    public ResponseEntity<RecipeDTO> getRecipeById( @Parameter(description = "ID рецепта",
+            required = true, example = "1") @PathVariable Long id) {
         return ResponseEntity.ok(recipeService.getRecipeById(id));
     }
 
+    @Operation(
+            summary = "Получить рецепты автора",
+            description = "Возвращает список рецептов по ID автора"
+    )
     @GetMapping("/author/{authorId}")
-    public ResponseEntity<List<RecipeDTO>> getRecipesByAuthorId(@PathVariable long authorId) {
+    public ResponseEntity<List<RecipeDTO>> getRecipesByAuthorId( @Parameter(description = "ID автора",
+            required = true, example = "1") @PathVariable long authorId) {
         return ResponseEntity.ok(recipeService.getRecipesByAuthorId(authorId));
     }
 
+    @Operation(
+            summary = "Получить рецепты категории",
+            description = "Возвращает список рецептов по ID категории"
+    )
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<RecipeDTO>> getRecipesByCategory(@PathVariable Long categoryId) {
+    public ResponseEntity<List<RecipeDTO>> getRecipesByCategory( @Parameter(description = "ID категории",
+            required = true, example = "1") @PathVariable Long categoryId) {
         return ResponseEntity.ok(recipeService.getRecipesByCategory(categoryId));
     }
 
+    @Operation(
+            summary = "Создать новый рецепт",
+            description = "Создает новый рецепт с ингредиентами. Ингредиенты создаются автоматически, если не сущ"
+    )
+    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "Рецепт успешно создан"),
+                           @ApiResponse(responseCode = "400", description = "Ошибка валидации", content = @Content),
+                           @ApiResponse(responseCode = "404", description = "Автор или категория не найдены",
+                                   content = @Content)
+    })
     @PostMapping
     public ResponseEntity<RecipeDTO> createRecipe(@Valid @RequestBody RecipeDTO dto) {
         return new ResponseEntity<>(recipeService.createRecipe(dto), HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Создать рецепт без транзакции (демонстрация)",
+            description = "Создает рецепт без @Transactional. При ошибке данные могут сохраниться частично."
+    )
     @PostMapping("/demo/withoutTransaction")
     public ResponseEntity<Object> createRecipeWithoutTransaction(@Valid @RequestBody RecipeDTO dto) {
         try {
@@ -111,6 +189,10 @@ public class RecipeController {
         }
     }
 
+    @Operation(
+            summary = "Создать рецепт с транзакцией (демонстрация)",
+            description = "Создает рецепт с @Transactional. При ошибке происходит полный откат изменений."
+    )
     @PostMapping("/demo/withTransaction")
     public ResponseEntity<Object> createRecipeWithTransaction(@Valid @RequestBody RecipeDTO dto) {
         try {
@@ -123,13 +205,30 @@ public class RecipeController {
         }
     }
 
+    @Operation(
+            summary = "Обновить рецепт",
+            description = "Обновляет существующий рецепт по его ID"
+    )
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Рецепт успешно обновлен"),
+                           @ApiResponse(responseCode = "404", description = "Рецепт не найден", content = @Content)
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<RecipeDTO> updateRecipe(@PathVariable Long id, @Valid @RequestBody RecipeDTO dto) {
+    public ResponseEntity<RecipeDTO> updateRecipe(@Parameter(description = "ID рецепта", required = true)
+                                                      @PathVariable Long id,
+                                                  @Valid @RequestBody RecipeDTO dto) {
         return ResponseEntity.ok(recipeService.updateRecipe(id, dto));
     }
 
+    @Operation(
+            summary = "Удалить рецепт",
+            description = "Удаляет рецепт по его ID. Кэш автоматически инвалидируется."
+    )
+    @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Рецепт успешно удален"),
+                           @ApiResponse(responseCode = "404", description = "Рецепт не найден", content = @Content)
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRecipe( @Parameter(description = "ID рецепта",
+            required = true) @PathVariable Long id) {
         recipeService.deleteRecipe(id);
         return ResponseEntity.noContent().build();
     }
