@@ -1,6 +1,7 @@
 package com.example.springrecipe.exceptions;
 
 import com.example.springrecipe.dto.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,6 +15,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionsHandler {
 
@@ -22,7 +24,7 @@ public class GlobalExceptionsHandler {
             MethodArgumentNotValidException ex, WebRequest request) {
 
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
@@ -39,8 +41,7 @@ public class GlobalExceptionsHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(Exception ex, WebRequest request) {
-        System.err.println("Unexpected error: " + ex.getMessage());
-        ex.printStackTrace();
+        log.error("Unexpected error: ", ex);
 
         return buildResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,

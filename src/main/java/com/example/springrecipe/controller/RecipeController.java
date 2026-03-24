@@ -36,11 +36,6 @@ public class RecipeController {
         return ResponseEntity.ok(recipeService.getAllRecipes());
     }
 
-    @GetMapping("/test-error")
-    public ResponseEntity<String> testError() {
-        throw new RuntimeException("Тестовая ошибка сервера");
-    }
-
     @GetMapping("/demo/NPlusOne")
     public ResponseEntity<List<RecipeDTO>> getAllRecipesWithNPlusOneProblem() {
         return ResponseEntity.ok(recipeService.getAllRecipesWithNPlusOneProblem());

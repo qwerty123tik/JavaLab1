@@ -64,3 +64,155 @@
 2026-03-24 20:58:11.972 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-03-24 20:58:11.976 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-03-24 20:58:11.982 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-24 21:13:55.059 [restartedMain] INFO  c.e.s.SpringRecipeApplication - Starting SpringRecipeApplication using Java 25.0.2 with PID 11060 (D:\JavaLabs\Lab1\target\classes started by naast in D:\JavaLabs\Lab1)
+2026-03-24 21:13:55.060 [restartedMain] DEBUG c.e.s.SpringRecipeApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
+2026-03-24 21:13:55.060 [restartedMain] INFO  c.e.s.SpringRecipeApplication - No active profile set, falling back to 1 default profile: "default"
+2026-03-24 21:13:55.106 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-24 21:13:55.106 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-24 21:13:55.196 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
+2026-03-24 21:13:55.665 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-24 21:13:55.714 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 43 ms. Found 7 JPA repository interfaces.
+2026-03-24 21:13:56.083 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-24 21:13:56.093 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-24 21:13:56.094 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-24 21:13:56.095 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
+2026-03-24 21:13:56.124 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1018 ms
+2026-03-24 21:13:56.237 [restartedMain] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-03-24 21:13:56.287 [restartedMain] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-03-24 21:13:56.593 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-24 21:13:56.617 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-24 21:13:56.871 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5b170515
+2026-03-24 21:13:56.872 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-24 21:13:56.893 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-24 21:13:56.910 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5432/recipeSystem_db]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 18.3
+	Default catalog/schema: recipeSystem_db/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-24 21:13:57.641 [restartedMain] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-24 21:13:57.717 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-24 21:13:57.793 [restartedMain] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-24 21:13:58.886 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-24 21:13:58.899 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-24 21:13:58.904 [restartedMain] INFO  c.e.s.SpringRecipeApplication - Started SpringRecipeApplication in 4.269 seconds (process running for 4.663)
+2026-03-24 21:14:07.561 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-24 21:14:07.561 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-24 21:14:07.565 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 4 ms
+2026-03-24 21:14:07.902 [http-nio-8080-exec-1] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [1] in public org.springframework.http.ResponseEntity<com.example.springrecipe.dto.RecipeDTO> com.example.springrecipe.controller.RecipeController.updateRecipe(java.lang.Long,com.example.springrecipe.dto.RecipeDTO) with 4 errors: [Field error in object 'recipeDTO' on field 'cookingTime': rejected value [null]; codes [NotNull.recipeDTO.cookingTime,NotNull.cookingTime,NotNull.java.lang.Integer,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [recipeDTO.cookingTime,cookingTime]; arguments []; default message [cookingTime]]; default message [Укажите время приготовления]] [Field error in object 'recipeDTO' on field 'recipeIngredients': rejected value [null]; codes [NotEmpty.recipeDTO.recipeIngredients,NotEmpty.recipeIngredients,NotEmpty.java.util.List,NotEmpty]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [recipeDTO.recipeIngredients,recipeIngredients]; arguments []; default message [recipeIngredients]]; default message [Рецепт должен содержать хотя бы один ингредиент]] [Field error in object 'recipeDTO' on field 'categoryId': rejected value [null]; codes [NotNull.recipeDTO.categoryId,NotNull.categoryId,NotNull.java.lang.Long,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [recipeDTO.categoryId,categoryId]; arguments []; default message [categoryId]]; default message [ID категории обязателен]] [Field error in object 'recipeDTO' on field 'authorId': rejected value [null]; codes [NotNull.recipeDTO.authorId,NotNull.authorId,NotNull.java.lang.Long,NotNull]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [recipeDTO.authorId,authorId]; arguments []; default message [authorId]]; default message [ID автора обязателен]] ]
+2026-03-24 21:14:11.327 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.author_id,
+        a1_0.id,
+        a1_0.email,
+        a1_0.user_name,
+        c1_0.id,
+        c1_0.description,
+        c1_0.name,
+        r1_0.cooking_time,
+        r1_0.description,
+        r1_0.name,
+        ri1_0.recipe_id,
+        ri1_0.id,
+        ri1_0.ingredient_id,
+        i1_0.id,
+        i1_0.name,
+        u1_0.id,
+        u1_0.abbreviation,
+        u1_0.name,
+        ri1_0.quantity,
+        ri1_0.unit_id,
+        r3_0.recipe_id,
+        r3_0.id,
+        r3_0.comment,
+        r3_0.rating,
+        r3_0.user_id 
+    from
+        recipes r1_0 
+    join
+        users a1_0 
+            on a1_0.id=r1_0.author_id 
+    left join
+        categories c1_0 
+            on c1_0.id=r1_0.category_id 
+    left join
+        recipe_ingredients ri1_0 
+            on r1_0.id=ri1_0.recipe_id 
+    left join
+        ingredients i1_0 
+            on i1_0.id=ri1_0.ingredient_id 
+    left join
+        units_of_measure u1_0 
+            on u1_0.id=i1_0.unit_id 
+    left join
+        reviews r3_0 
+            on r1_0.id=r3_0.recipe_id 
+    where
+        r1_0.id=?
+2026-03-24 21:14:11.336 [http-nio-8080-exec-2] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [17]
+2026-03-24 21:14:11.412 [http-nio-8080-exec-2] INFO  c.e.s.service.RecipeService - Найден рецепт: Овсяная каша (ID: 17)
+2026-03-24 21:14:14.062 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.id,
+        r1_0.author_id,
+        a1_0.id,
+        a1_0.email,
+        a1_0.user_name,
+        c1_0.id,
+        c1_0.description,
+        c1_0.name,
+        r1_0.cooking_time,
+        r1_0.description,
+        r1_0.name,
+        ri1_0.recipe_id,
+        ri1_0.id,
+        ri1_0.ingredient_id,
+        i1_0.id,
+        i1_0.name,
+        u1_0.id,
+        u1_0.abbreviation,
+        u1_0.name,
+        ri1_0.quantity,
+        ri1_0.unit_id,
+        r3_0.recipe_id,
+        r3_0.id,
+        r3_0.comment,
+        r3_0.rating,
+        r3_0.user_id 
+    from
+        recipes r1_0 
+    join
+        users a1_0 
+            on a1_0.id=r1_0.author_id 
+    left join
+        categories c1_0 
+            on c1_0.id=r1_0.category_id 
+    left join
+        recipe_ingredients ri1_0 
+            on r1_0.id=ri1_0.recipe_id 
+    left join
+        ingredients i1_0 
+            on i1_0.id=ri1_0.ingredient_id 
+    left join
+        units_of_measure u1_0 
+            on u1_0.id=i1_0.unit_id 
+    left join
+        reviews r3_0 
+            on r1_0.id=r3_0.recipe_id 
+    where
+        r1_0.id=?
+2026-03-24 21:14:14.065 [http-nio-8080-exec-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [1711]
+2026-03-24 21:14:14.065 [http-nio-8080-exec-5] WARN  c.e.s.service.RecipeService - Рецепт с ID 1711 не найден
+2026-03-24 21:14:14.071 [http-nio-8080-exec-5] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.example.springrecipe.exceptions.RecipeNotFoundException: Recipe not found with id: 1711]
+2026-03-24 21:14:20.234 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-24 21:14:20.240 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-24 21:14:20.245 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-24 21:14:20.248 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-24 21:14:20.254 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
