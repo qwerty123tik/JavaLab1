@@ -129,11 +129,10 @@ public class CategoryServiceTest {
     @Test
     @DisplayName("Ошибка обновления: категория не найдена")
     void updateCategory_NotFound() {
+        CategoryDTO dto = dto("test");
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(CategoryNotFoundException.class,
-                () -> categoryService.updateCategory(1L, dto("test")));
-
+        assertThrows(CategoryNotFoundException.class, () -> categoryService.updateCategory(1L, dto));
         verify(categoryRepository, never()).save(any());
     }
 

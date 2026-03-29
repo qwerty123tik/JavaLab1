@@ -122,17 +122,19 @@ public class ReviewServiceTest {
 
     @Test
     void createReview_userNotFound() {
+        ReviewDTO dto = dto();
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> reviewService.createReview(dto()));
+        assertThrows(UserNotFoundException.class, () -> reviewService.createReview(dto));
     }
 
     @Test
     void createReview_recipeNotFound() {
+        ReviewDTO dto = dto();
         when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
         when(recipeRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RecipeNotFoundException.class, () -> reviewService.createReview(dto()));
+        assertThrows(RecipeNotFoundException.class, () -> reviewService.createReview(dto));
     }
 
     @Test
@@ -154,9 +156,10 @@ public class ReviewServiceTest {
 
     @Test
     void updateReview_notFound() {
+        ReviewDTO dto = dto();
         when(reviewRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ReviewNotFoundException.class, () -> reviewService.updateReview(1L, dto()));
+        assertThrows(ReviewNotFoundException.class, () -> reviewService.updateReview(1L, dto));
     }
 
     @Test

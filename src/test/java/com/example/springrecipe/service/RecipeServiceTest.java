@@ -88,17 +88,19 @@ public class RecipeServiceTest {
 
     @Test
     void createRecipe_userNotFound() {
+        RecipeDTO dto = dto();
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> service.createRecipe(dto()));
+        assertThrows(UserNotFoundException.class, () -> service.createRecipe(dto));
     }
 
     @Test
     void createRecipe_categoryNotFound() {
+        RecipeDTO dto = dto();
         when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(CategoryNotFoundException.class, () -> service.createRecipe(dto()));
+        assertThrows(CategoryNotFoundException.class, () -> service.createRecipe(dto));
     }
 
     @Test
@@ -113,16 +115,17 @@ public class RecipeServiceTest {
         when(recipeRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(mapper.toRecipeDTO(any())).thenReturn(dto());
 
-        RecipeDTO result = service.updateRecipe(1L, dto());
+        RecipeDTO result = service.updateRecipe(1L, dto);
 
-        assertEquals("Суп", result.getName());
+        assertEquals(dto.getName(), result.getName());
     }
 
     @Test
     void updateRecipe_notFound() {
+        RecipeDTO dto = dto();
         when(recipeRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RecipeNotFoundException.class, () -> service.updateRecipe(1L, dto()));
+        assertThrows(RecipeNotFoundException.class, () -> service.updateRecipe(1L, dto));
     }
 
     @Test

@@ -101,10 +101,12 @@ public class UserServiceTest {
 
     @Test
     void createUser_emailExists() {
+        UserDTO dto = dto();
+
         when(userRepository.findByEmail("tiikitak@mail.com"))
                 .thenReturn(Optional.of(new User()));
 
-        assertThrows(EmailAlreadyExists.class, () -> userService.createUser(dto()));
+        assertThrows(EmailAlreadyExists.class, () -> userService.createUser(dto));
 
         verify(userRepository, never()).save(any());
     }
@@ -128,9 +130,10 @@ public class UserServiceTest {
 
     @Test
     void updateUser_notFound() {
+        UserDTO dto = dto();
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.updateUser(1L, dto()));
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(1L, dto));
     }
 
     @Test

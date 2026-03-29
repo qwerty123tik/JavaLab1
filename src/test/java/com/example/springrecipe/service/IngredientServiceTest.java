@@ -139,10 +139,11 @@ public class IngredientServiceTest {
 
     @Test
     void updateIngredient_NotFound() {
+        IngredientDTO dto = dto("test");
         when(ingredientRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(IngredientNotFoundException.class,
-                () -> ingredientService.updateIngredient(1L, dto("test")));
+                () -> ingredientService.updateIngredient(1L, dto));
     }
 
     @Test
