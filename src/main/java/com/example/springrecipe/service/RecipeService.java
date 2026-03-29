@@ -269,9 +269,7 @@ public class RecipeService {
                 UnitOfMeasure unit = (riDto.getUnitAbbreviation() == null || riDto.getUnitAbbreviation().isEmpty())
                         ? null
                         : unitRepository.findByAbbreviation(riDto.getUnitAbbreviation())
-                        .orElseThrow(() -> {
-                            return new UnitNotFoundException("Unit not found: " + riDto.getUnitAbbreviation());
-                        });
+                        .orElseThrow(() -> new UnitNotFoundException("Unit not found: " + riDto.getUnitAbbreviation()));
 
                 Ingredient ingredient = ingredientRepository.findByName(riDto.getIngredientName())
                         .orElseGet(() -> {
