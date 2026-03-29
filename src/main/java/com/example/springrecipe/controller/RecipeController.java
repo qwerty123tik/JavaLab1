@@ -175,7 +175,7 @@ public class RecipeController {
 
     @Operation(
             summary = "Создать рецепт без транзакции (демонстрация)",
-            description = "Создает рецепт без @Transactional. При ошибке данные могут сохраниться частично."
+            description = "Создает рецепт без @Transactional. При ошибке данные могут сохраниться частично"
     )
     @PostMapping("/demo/withoutTransaction")
     public ResponseEntity<Object> createRecipeWithoutTransaction(@Valid @RequestBody RecipeDTO dto) {
@@ -185,13 +185,13 @@ public class RecipeController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка: " + e.getMessage() +
-                            "\nно! Рецепт мог сохраниться в БД. Проверьте таблицу recipes.");
+                            "\nно! Рецепт мог сохраниться в БД. Проверьте таблицу recipes");
         }
     }
 
     @Operation(
             summary = "Создать рецепт с транзакцией (демонстрация)",
-            description = "Создает рецепт с @Transactional. При ошибке происходит полный откат изменений."
+            description = "Создает рецепт с @Transactional. При ошибке происходит полный откат изменений"
     )
     @PostMapping("/demo/withTransaction")
     public ResponseEntity<Object> createRecipeWithTransaction(@Valid @RequestBody RecipeDTO dto) {
@@ -221,7 +221,7 @@ public class RecipeController {
 
     @Operation(
             summary = "Удалить рецепт",
-            description = "Удаляет рецепт по его ID. Кэш автоматически инвалидируется."
+            description = "Удаляет рецепт по его ID. Кэш автоматически инвалидируется"
     )
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "Рецепт успешно удален"),
                            @ApiResponse(responseCode = "404", description = "Рецепт не найден", content = @Content)
@@ -231,5 +231,29 @@ public class RecipeController {
             required = true) @PathVariable Long id) {
         recipeService.deleteRecipe(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Массовое создание рецептов (Транзакционно)",
+            description = "Создает несколько рецептов. Если хотя бы один рецепт невалиден или " +
+                    "произойдет ошибка — не сохранится НИЧЕГО (откат транзакции)"
+    )
+    @PostMapping("/bulk")
+    public ResponseEntity<List<RecipeDTO>> bulkCreateWithTransaction(
+            @RequestBody List<RecipeDTO> recipes) {
+        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithTransaction(recipes);
+        return ResponseEntity.ok(result);
+    }
+
+    @Operation(
+            summary = "Массовое создание без транзакции (Частичное)",
+            description = "Пытается создать каждый рецепт по отдельности. " +
+                    "Ошибки в одном рецепте не мешают сохранению других"
+    )
+    @PostMapping("/bulk/without-transaction")
+    public ResponseEntity<List<RecipeDTO>> bulkCreateWithoutTransaction(
+            @RequestBody List<RecipeDTO> recipes) {
+        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithoutTransaction(recipes);
+        return ResponseEntity.ok(result);
     }
 }
