@@ -35,7 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          mvn -B clean verify sonar:sonar \
+          mvn -B clean verify sonar:sonar -X -e \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=qwerty123tik \
             -Dsonar.projectKey=qwerty123tik_JavaLab1 \
