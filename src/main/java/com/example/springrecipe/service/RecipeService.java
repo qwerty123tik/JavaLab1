@@ -319,6 +319,10 @@ public class RecipeService {
             recipe.getRecipeIngredients().clear();
 
             for (RecipeIngredientDTO riDto : dto.getRecipeIngredients()) {
+                if (riDto.getIngredientName() == null || riDto.getIngredientName().isEmpty()) {
+                    throw new IllegalArgumentException("Ingredient name is required");
+                }
+
                 Ingredient ingredient = ingredientRepository.findByName(riDto.getIngredientName())
                         .orElseGet(() -> {
                             log.info("Создание нового ингредиента при обновлении: {}", riDto.getIngredientName());
