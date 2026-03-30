@@ -242,12 +242,15 @@ public class RecipeService {
                 });
         log.debug("Автор найден: {}", author.getUserName());
 
-        Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> {
-                    log.error("Категория с ID {} не найдена", dto.getCategoryId());
-                    return new CategoryNotFoundException("Category not found");
-                });
-        log.debug("Категория найдена: {}", category.getName());
+        Category category = null;
+        if (dto.getCategoryId() != null) {
+            category = categoryRepository.findById(dto.getCategoryId())
+                    .orElseThrow(() -> {
+                        log.error("Категория с ID {} не найдена", dto.getCategoryId());
+                        return new CategoryNotFoundException("Category not found");
+                    });
+            log.debug("Категория найдена: {}", category.getName());
+        }
 
         Recipe recipe = new Recipe();
         recipe.setName(dto.getName());

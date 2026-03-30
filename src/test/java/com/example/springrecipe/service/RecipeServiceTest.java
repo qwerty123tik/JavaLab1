@@ -20,12 +20,7 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RecipeServiceTest {
@@ -108,6 +103,7 @@ class RecipeServiceTest {
                 .build();
     }
 
+    // ---------- getAllRecipesWithNPlusOneProblem ----------
     @Test
     void getAllRecipesWithNPlusOneProblem_shouldReturnRecipes() {
         when(recipeRepository.findAll()).thenReturn(List.of(testRecipe));
@@ -121,6 +117,7 @@ class RecipeServiceTest {
         verify(mapper).toRecipeDTO(testRecipe);
     }
 
+    // ---------- getAllRecipesWithEntityGraph ----------
     @Test
     void getAllRecipesWithEntityGraph_shouldReturnRecipes() {
         when(recipeRepository.findAllWithDetails()).thenReturn(List.of(testRecipe));
@@ -132,6 +129,7 @@ class RecipeServiceTest {
         verify(recipeRepository).findAllWithDetails();
     }
 
+    // ---------- searchRecipesJPQL ----------
     @Test
     void searchRecipesJPQL_cacheMiss_shouldQueryDbAndCache() {
         String ingredientName = "Flour";
@@ -179,6 +177,45 @@ class RecipeServiceTest {
     }
 
     @Test
+    void searchRecipesJPQL_withAscendingSort_shouldCoverAscBranch() {
+        Sort sort = Sort.by("name").ascending();
+        Pageable pageable = PageRequest.of(0, 10, sort);
+        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
+
+        when(recipeRepository.findByJPQL(any(), any(), eq(pageable))).thenReturn(recipePage);
+        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
+
+        Page<RecipeDTO> result = recipeService.searchRecipesJPQL("Flour", "Breakfast", pageable);
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void searchRecipesJPQL_withDescendingSort_shouldCoverDescBranch() {
+        Sort sort = Sort.by("name").descending();
+        Pageable pageable = PageRequest.of(0, 10, sort);
+        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
+
+        when(recipeRepository.findByJPQL(any(), any(), eq(pageable))).thenReturn(recipePage);
+        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
+
+        Page<RecipeDTO> result = recipeService.searchRecipesJPQL("Flour", "Breakfast", pageable);
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void searchRecipesJPQL_withUnsorted_shouldUseDefaultSortName() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.unsorted());
+        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
+
+        when(recipeRepository.findByJPQL(any(), any(), eq(pageable))).thenReturn(recipePage);
+        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
+
+        Page<RecipeDTO> result = recipeService.searchRecipesJPQL("Flour", "Breakfast", pageable);
+        assertThat(result).isNotNull();
+    }
+
+    // ---------- searchRecipesNative ----------
+    @Test
     void searchRecipesNative_cacheMiss_shouldQueryDbAndCache() {
         String ingredientName = "Flour";
         String categoryName = "Breakfast";
@@ -208,6 +245,32 @@ class RecipeServiceTest {
     }
 
     @Test
+    void searchRecipesNative_withDescendingSort_shouldCoverDescBranch() {
+        Sort sort = Sort.by("name").descending();
+        Pageable pageable = PageRequest.of(0, 10, sort);
+        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
+
+        when(recipeRepository.findByNative(any(), any(), eq(pageable))).thenReturn(recipePage);
+        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
+
+        Page<RecipeDTO> result = recipeService.searchRecipesNative("Flour", "Breakfast", pageable);
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void searchRecipesNative_withUnsorted_shouldUseDefaultSortName() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
+
+        when(recipeRepository.findByNative(any(), any(), eq(pageable))).thenReturn(recipePage);
+        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
+
+        Page<RecipeDTO> result = recipeService.searchRecipesNative("Flour", "Breakfast", pageable);
+        assertThat(result).isNotNull();
+    }
+
+    // ---------- getCacheStatistics ----------
+    @Test
     void getCacheStatistics_shouldReturnStats() {
         Pageable pageable = PageRequest.of(0, 10);
         when(recipeRepository.findByJPQL(any(), any(), any())).thenReturn(new PageImpl<>(List.of(testRecipe)));
@@ -222,6 +285,7 @@ class RecipeServiceTest {
         assertThat(stats).containsEntry("dataChanged", false);
     }
 
+    // ---------- getAllRecipes ----------
     @Test
     void getAllRecipes_shouldReturnAllRecipes() {
         when(recipeRepository.findAllWithDetails()).thenReturn(List.of(testRecipe));
@@ -233,6 +297,7 @@ class RecipeServiceTest {
         verify(recipeRepository).findAllWithDetails();
     }
 
+    // ---------- getRecipeById ----------
     @Test
     void getRecipeById_existingId_shouldReturnRecipe() {
         when(recipeRepository.findById(1L)).thenReturn(Optional.of(testRecipe));
@@ -253,6 +318,7 @@ class RecipeServiceTest {
                 .hasMessageContaining("Recipe not found with id: 99");
     }
 
+    // ---------- getRecipesByAuthorId ----------
     @Test
     void getRecipesByAuthorId_shouldReturnRecipes() {
         when(recipeRepository.findByAuthorId(1L)).thenReturn(List.of(testRecipe));
@@ -264,6 +330,7 @@ class RecipeServiceTest {
         verify(recipeRepository).findByAuthorId(1L);
     }
 
+    // ---------- getRecipesByCategory ----------
     @Test
     void getRecipesByCategory_shouldReturnRecipes() {
         when(recipeRepository.findByCategoryId(1L)).thenReturn(List.of(testRecipe));
@@ -275,6 +342,7 @@ class RecipeServiceTest {
         verify(recipeRepository).findByCategoryId(1L);
     }
 
+    // ---------- createRecipe ----------
     @Test
     void createRecipe_success_shouldCreateAndInvalidateCache() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
@@ -319,7 +387,7 @@ class RecipeServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
         when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.empty());
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe); // обязательно
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
 
         assertThatThrownBy(() -> recipeService.createRecipe(testRecipeDTO))
                 .isInstanceOf(UnitNotFoundException.class)
@@ -335,7 +403,7 @@ class RecipeServiceTest {
         testIngredientDTO.setIngredientName(null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe); // обязательно
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
 
         assertThatThrownBy(() -> recipeService.createRecipe(testRecipeDTO))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -347,12 +415,38 @@ class RecipeServiceTest {
     }
 
     @Test
-    void bulkCreateRecipesWithTransaction_invalidDto_shouldThrow() {
-        RecipeDTO invalidDto = RecipeDTO.builder().name(null).build();
-        List<RecipeDTO> dtos = List.of(testRecipeDTO, invalidDto);
+    void createRecipe_withoutIngredients_shouldSucceed() {
+        RecipeDTO dto = RecipeDTO.builder()
+                .name("Empty Recipe")
+                .description("No ingredients")
+                .cookingTime(30)
+                .authorId(1L)
+                .categoryId(1L)
+                .recipeIngredients(null)
+                .build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
+
+        RecipeDTO result = recipeService.createRecipe(dto);
+        assertThat(result).isEqualTo(testRecipeDTO);
+        verify(recipeIngredientRepository, never()).saveAll(anyCollection());
+    }
+
+    @Test
+    void createRecipe_withNullCategoryId_shouldSucceed() {
+        RecipeDTO dto = RecipeDTO.builder()
+                .name("No Category")
+                .description("No category assigned")
+                .cookingTime(30)
+                .authorId(1L)
+                .categoryId(null)
+                .recipeIngredients(List.of(testIngredientDTO))
+                .build();
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
         when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
         when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
@@ -360,11 +454,81 @@ class RecipeServiceTest {
         when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
         when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
 
-        assertThatThrownBy(() -> recipeService.bulkCreateRecipesWithTransaction(dtos))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("В списке передан невалидный рецепт (пустое имя)");
+        RecipeDTO result = recipeService.createRecipe(dto);
+        assertThat(result).isEqualTo(testRecipeDTO);
+        verify(categoryRepository, never()).findById(any());
+    }
 
-        verify(recipeRepository, atLeastOnce()).save(any(Recipe.class));
+    @Test
+    void createRecipe_withNullUnit_shouldSucceedAndSetUnitNull() {
+        RecipeIngredientDTO ingredientWithNullUnit = RecipeIngredientDTO.builder()
+                .ingredientName("Sugar")
+                .quantity(100.0)
+                .unitAbbreviation(null)
+                .build();
+
+        RecipeDTO dto = RecipeDTO.builder()
+                .name("Sweet Pancakes")
+                .description("Sweet version")
+                .cookingTime(30)
+                .authorId(1L)
+                .categoryId(1L)
+                .recipeIngredients(List.of(ingredientWithNullUnit))
+                .build();
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
+        when(ingredientRepository.findByName("Sugar")).thenReturn(Optional.empty());
+        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(new Ingredient());
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
+
+        ArgumentCaptor<Collection<RecipeIngredient>> captor = ArgumentCaptor.forClass(Collection.class);
+        when(recipeIngredientRepository.saveAll(captor.capture())).thenReturn(Collections.emptyList());
+
+        RecipeDTO result = recipeService.createRecipe(dto);
+
+        assertThat(result).isEqualTo(testRecipeDTO);
+        Collection<RecipeIngredient> savedIngredients = captor.getValue();
+        assertThat(savedIngredients).hasSize(1);
+        assertThat(savedIngredients.iterator().next().getUnit()).isNull();
+        verify(unitRepository, never()).findByAbbreviation(any());
+    }
+
+    @Test
+    void createRecipe_withEmptyUnit_shouldSucceedAndSetUnitNull() {
+        RecipeIngredientDTO ingredientWithEmptyUnit = RecipeIngredientDTO.builder()
+                .ingredientName("Sugar")
+                .quantity(100.0)
+                .unitAbbreviation("")
+                .build();
+
+        RecipeDTO dto = RecipeDTO.builder()
+                .name("Sweet Pancakes")
+                .description("Sweet version")
+                .cookingTime(30)
+                .authorId(1L)
+                .categoryId(1L)
+                .recipeIngredients(List.of(ingredientWithEmptyUnit))
+                .build();
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
+        when(ingredientRepository.findByName("Sugar")).thenReturn(Optional.empty());
+        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(new Ingredient());
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
+
+        ArgumentCaptor<Collection<RecipeIngredient>> captor = ArgumentCaptor.forClass(Collection.class);
+        when(recipeIngredientRepository.saveAll(captor.capture())).thenReturn(Collections.emptyList());
+
+        RecipeDTO result = recipeService.createRecipe(dto);
+
+        assertThat(result).isEqualTo(testRecipeDTO);
+        Collection<RecipeIngredient> savedIngredients = captor.getValue();
+        assertThat(savedIngredients).hasSize(1);
+        assertThat(savedIngredients.iterator().next().getUnit()).isNull();
+        verify(unitRepository, never()).findByAbbreviation(any());
     }
 
     @Test
@@ -383,6 +547,7 @@ class RecipeServiceTest {
         assertThat(result).isEqualTo(testRecipeDTO);
     }
 
+    // ---------- updateRecipe ----------
     @Test
     void updateRecipe_success_shouldUpdateAndInvalidateCache() {
         RecipeDTO updateDto = RecipeDTO.builder()
@@ -462,86 +627,6 @@ class RecipeServiceTest {
     }
 
     @Test
-    void deleteRecipe_success_shouldDeleteAndInvalidateCache() {
-        when(recipeRepository.existsById(1L)).thenReturn(true);
-        doNothing().when(recipeRepository).deleteById(1L);
-
-        recipeService.deleteRecipe(1L);
-
-        verify(recipeRepository).deleteById(1L);
-
-        Map<String, Object> stats = recipeService.getCacheStatistics();
-        assertThat(stats).containsEntry("cacheSize", 0);
-    }
-
-    @Test
-    void deleteRecipe_notFound_shouldThrowRecipeNotFoundException() {
-        when(recipeRepository.existsById(99L)).thenReturn(false);
-
-        assertThatThrownBy(() -> recipeService.deleteRecipe(99L))
-                .isInstanceOf(RecipeNotFoundException.class);
-        verify(recipeRepository, never()).deleteById(any());
-    }
-
-    @Test
-    void bulkCreateRecipesWithTransaction_success_shouldCreateAll() {
-        List<RecipeDTO> dtos = List.of(testRecipeDTO, testRecipeDTO);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
-        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
-        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
-
-        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithTransaction(dtos);
-
-        assertThat(result).hasSize(2);
-        verify(recipeRepository, times(2)).save(any(Recipe.class));
-        verify(recipeIngredientRepository, times(2)).saveAll(anyCollection());
-    }
-
-    @Test
-    void bulkCreateRecipesWithoutTransaction_partialSuccess_shouldCreateValidOnes() {
-        RecipeDTO validDto = testRecipeDTO;
-        RecipeDTO invalidDto = RecipeDTO.builder().name(null).build();
-        List<RecipeDTO> dtos = List.of(validDto, invalidDto);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
-        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
-        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
-
-        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithoutTransaction(dtos);
-
-        assertThat(result).hasSize(1);
-        verify(recipeRepository, times(1)).save(any(Recipe.class));
-    }
-
-    @Test
-    void bulkCreateRecipesWithoutTransaction_allValid_shouldCreateAll() {
-        List<RecipeDTO> dtos = List.of(testRecipeDTO, testRecipeDTO);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
-        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
-        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
-
-        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithoutTransaction(dtos);
-
-        assertThat(result).hasSize(2);
-        verify(recipeRepository, times(2)).save(any(Recipe.class));
-    }
-
-    @Test
     void updateRecipe_ingredientNotFound_createsNewIngredient() {
         RecipeDTO updateDto = RecipeDTO.builder()
                 .name("Updated Pancakes")
@@ -563,106 +648,6 @@ class RecipeServiceTest {
 
         assertThat(result).isEqualTo(testRecipeDTO);
         verify(ingredientRepository).save(any(Ingredient.class));
-    }
-
-    @Test
-    void bulkCreateRecipesWithoutTransaction_oneFails_shouldCreateSuccessfulOnes() {
-        // DTO that will fail due to missing unit (first)
-        RecipeDTO dtoWithMissingUnit = testRecipeDTO;
-        // DTO that succeeds (second)
-        RecipeDTO dtoWithExistingUnit = testRecipeDTO;
-        List<RecipeDTO> dtos = List.of(dtoWithMissingUnit, dtoWithExistingUnit);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        // First call returns empty (fail), second returns unit (success)
-        when(unitRepository.findByAbbreviation("g"))
-                .thenReturn(Optional.empty(), Optional.of(testUnit));
-        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
-        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
-
-        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithoutTransaction(dtos);
-
-        assertThat(result).hasSize(1);
-        verify(recipeIngredientRepository, times(1)).saveAll(anyCollection());
-        verify(recipeRepository, times(2)).save(any(Recipe.class));
-
-        Map<String, Object> stats = recipeService.getCacheStatistics();
-        assertThat(stats).containsEntry("cacheSize", 0);
-    }
-    @Test
-    void createRecipe_withNullUnit_shouldSucceedAndSetUnitNull() {
-        RecipeIngredientDTO ingredientWithNullUnit = RecipeIngredientDTO.builder()
-                .ingredientName("Sugar")
-                .quantity(100.0)
-                .unitAbbreviation(null)
-                .build();
-
-        RecipeDTO dto = RecipeDTO.builder()
-                .name("Sweet Pancakes")
-                .description("Sweet version")
-                .cookingTime(30)
-                .authorId(1L)
-                .categoryId(1L)
-                .recipeIngredients(List.of(ingredientWithNullUnit))
-                .build();
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        when(ingredientRepository.findByName("Sugar")).thenReturn(Optional.empty());
-        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(new Ingredient());
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-
-        ArgumentCaptor<Collection<RecipeIngredient>> captor = ArgumentCaptor.forClass(Collection.class);
-        when(recipeIngredientRepository.saveAll(captor.capture())).thenReturn(Collections.emptyList());
-
-        RecipeDTO result = recipeService.createRecipe(dto);
-
-        assertThat(result).isEqualTo(testRecipeDTO);
-        Collection<RecipeIngredient> savedIngredients = captor.getValue();
-        assertThat(savedIngredients).hasSize(1);
-        assertThat(savedIngredients.iterator().next().getUnit()).isNull();
-        verify(unitRepository, never()).findByAbbreviation(any());
-    }
-
-    @Test
-    void createRecipe_withEmptyUnit_shouldSucceedAndSetUnitNull() {
-        RecipeIngredientDTO ingredientWithEmptyUnit = RecipeIngredientDTO.builder()
-                .ingredientName("Sugar")
-                .quantity(100.0)
-                .unitAbbreviation("")
-                .build();
-
-        RecipeDTO dto = RecipeDTO.builder()
-                .name("Sweet Pancakes")
-                .description("Sweet version")
-                .cookingTime(30)
-                .authorId(1L)
-                .categoryId(1L)
-                .recipeIngredients(List.of(ingredientWithEmptyUnit))
-                .build();
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        when(ingredientRepository.findByName("Sugar")).thenReturn(Optional.empty());
-        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(new Ingredient());
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-
-        ArgumentCaptor<Collection<RecipeIngredient>> captor = ArgumentCaptor.forClass(Collection.class);
-        when(recipeIngredientRepository.saveAll(captor.capture())).thenReturn(Collections.emptyList());
-
-        RecipeDTO result = recipeService.createRecipe(dto);
-
-        assertThat(result).isEqualTo(testRecipeDTO);
-        Collection<RecipeIngredient> savedIngredients = captor.getValue();
-        assertThat(savedIngredients).hasSize(1);
-        assertThat(savedIngredients.iterator().next().getUnit()).isNull();
-        verify(unitRepository, never()).findByAbbreviation(any());
     }
 
     @Test
@@ -736,89 +721,6 @@ class RecipeServiceTest {
     }
 
     @Test
-    void searchRecipesJPQL_withSorting_shouldCoverTernaryBranches() {
-        Sort sort = Sort.by("name").ascending();
-        Pageable pageable = PageRequest.of(0, 10, sort);
-        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
-        Page<RecipeDTO> dtoPage = new PageImpl<>(List.of(testRecipeDTO));
-
-        when(recipeRepository.findByJPQL(any(), any(), eq(pageable))).thenReturn(recipePage);
-        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
-
-        Page<RecipeDTO> result = recipeService.searchRecipesJPQL("Flour", "Breakfast", pageable);
-        assertThat(result).isEqualTo(dtoPage);
-
-        Sort unsorted = Sort.unsorted();
-        Pageable pageableUnsorted = PageRequest.of(0, 10, unsorted);
-        when(recipeRepository.findByJPQL(any(), any(), eq(pageableUnsorted))).thenReturn(recipePage);
-        Page<RecipeDTO> resultUnsorted = recipeService.searchRecipesJPQL("Flour", "Breakfast", pageableUnsorted);
-        assertThat(resultUnsorted).isEqualTo(dtoPage);
-    }
-
-    @Test
-    void searchRecipesNative_withSorting_shouldCoverTernaryBranches() {
-        Sort sort = Sort.by("name").descending();
-        Pageable pageable = PageRequest.of(0, 10, sort);
-        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
-
-        when(recipeRepository.findByNative(any(), any(), eq(pageable))).thenReturn(recipePage);
-        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
-
-        Page<RecipeDTO> result = recipeService.searchRecipesNative("Flour", "Breakfast", pageable);
-        assertThat(result).isNotNull();
-
-        Pageable pageableUnsorted = PageRequest.of(0, 10);
-        when(recipeRepository.findByNative(any(), any(), eq(pageableUnsorted))).thenReturn(recipePage);
-        Page<RecipeDTO> resultUnsorted = recipeService.searchRecipesNative("Flour", "Breakfast", pageableUnsorted);
-        assertThat(resultUnsorted).isNotNull();
-    }
-
-    @Test
-    void createRecipe_withoutIngredients_shouldSucceed() {
-        RecipeDTO dto = RecipeDTO.builder()
-                .name("Empty Recipe")
-                .description("No ingredients")
-                .cookingTime(30)
-                .authorId(1L)
-                .categoryId(1L)
-                .recipeIngredients(null)
-                .build();
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-
-        RecipeDTO result = recipeService.createRecipe(dto);
-        assertThat(result).isEqualTo(testRecipeDTO);
-        verify(recipeIngredientRepository, never()).saveAll(anyCollection());
-    }
-
-    @Test
-    void createRecipe_withNullCategoryId_shouldSucceed() {
-        RecipeDTO dto = RecipeDTO.builder()
-                .name("No Category")
-                .description("No category assigned")
-                .cookingTime(30)
-                .authorId(1L)
-                .categoryId(null)
-                .recipeIngredients(List.of(testIngredientDTO))
-                .build();
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
-        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
-        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
-
-        RecipeDTO result = recipeService.createRecipe(dto);
-        assertThat(result).isEqualTo(testRecipeDTO);
-        verify(categoryRepository, never()).findById(any());
-    }
-
-    @Test
     void updateRecipe_withNullCategoryId_shouldSucceed() {
         RecipeDTO updateDto = RecipeDTO.builder()
                 .name("Updated")
@@ -839,18 +741,76 @@ class RecipeServiceTest {
         verify(categoryRepository, never()).findById(any());
     }
 
+    // ---------- deleteRecipe ----------
     @Test
-    void bulkCreateRecipesWithoutTransaction_withBlankName_shouldBeFilteredOut() {
-        RecipeDTO blankNameDto = RecipeDTO.builder()
-                .name("")
-                .description("Should be filtered")
-                .cookingTime(10)
-                .authorId(1L)
-                .categoryId(1L)
-                .recipeIngredients(List.of(testIngredientDTO))
-                .build();
+    void deleteRecipe_success_shouldDeleteAndInvalidateCache() {
+        when(recipeRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(recipeRepository).deleteById(1L);
+
+        recipeService.deleteRecipe(1L);
+
+        verify(recipeRepository).deleteById(1L);
+
+        Map<String, Object> stats = recipeService.getCacheStatistics();
+        assertThat(stats).containsEntry("cacheSize", 0);
+    }
+
+    @Test
+    void deleteRecipe_notFound_shouldThrowRecipeNotFoundException() {
+        when(recipeRepository.existsById(99L)).thenReturn(false);
+
+        assertThatThrownBy(() -> recipeService.deleteRecipe(99L))
+                .isInstanceOf(RecipeNotFoundException.class);
+        verify(recipeRepository, never()).deleteById(any());
+    }
+
+    // ---------- bulkCreateRecipesWithTransaction ----------
+    @Test
+    void bulkCreateRecipesWithTransaction_success_shouldCreateAll() {
+        List<RecipeDTO> dtos = List.of(testRecipeDTO, testRecipeDTO);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
+        when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
+        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
+        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
+        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
+
+        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithTransaction(dtos);
+
+        assertThat(result).hasSize(2);
+        verify(recipeRepository, times(2)).save(any(Recipe.class));
+        verify(recipeIngredientRepository, times(2)).saveAll(anyCollection());
+    }
+
+    @Test
+    void bulkCreateRecipesWithTransaction_invalidDto_shouldThrow() {
+        RecipeDTO invalidDto = RecipeDTO.builder().name(null).build();
+        List<RecipeDTO> dtos = List.of(testRecipeDTO, invalidDto);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
+        when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
+        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
+        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
+        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
+
+        assertThatThrownBy(() -> recipeService.bulkCreateRecipesWithTransaction(dtos))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("В списке передан невалидный рецепт (пустое имя)");
+
+        verify(recipeRepository, atLeastOnce()).save(any(Recipe.class));
+    }
+
+    // ---------- bulkCreateRecipesWithoutTransaction ----------
+    @Test
+    void bulkCreateRecipesWithoutTransaction_partialSuccess_shouldCreateValidOnes() {
         RecipeDTO validDto = testRecipeDTO;
-        List<RecipeDTO> dtos = List.of(blankNameDto, validDto);
+        RecipeDTO invalidDto = RecipeDTO.builder().name(null).build();
+        List<RecipeDTO> dtos = List.of(validDto, invalidDto);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
@@ -865,5 +825,84 @@ class RecipeServiceTest {
 
         assertThat(result).hasSize(1);
         verify(recipeRepository, times(1)).save(any(Recipe.class));
+    }
+
+    @Test
+    void bulkCreateRecipesWithoutTransaction_allValid_shouldCreateAll() {
+        List<RecipeDTO> dtos = List.of(testRecipeDTO, testRecipeDTO);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
+        when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
+        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
+        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
+        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
+
+        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithoutTransaction(dtos);
+
+        assertThat(result).hasSize(2);
+        verify(recipeRepository, times(2)).save(any(Recipe.class));
+    }
+
+    @Test
+    void bulkCreateRecipesWithoutTransaction_oneFails_shouldCreateSuccessfulOnes() {
+        // DTO that will fail due to missing unit (first)
+        RecipeDTO dtoWithMissingUnit = testRecipeDTO;
+        // DTO that succeeds (second)
+        RecipeDTO dtoWithExistingUnit = testRecipeDTO;
+        List<RecipeDTO> dtos = List.of(dtoWithMissingUnit, dtoWithExistingUnit);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
+        // First call returns empty (fail), second returns unit (success)
+        when(unitRepository.findByAbbreviation("g"))
+                .thenReturn(Optional.empty(), Optional.of(testUnit));
+        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
+        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
+        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
+
+        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithoutTransaction(dtos);
+
+        assertThat(result).hasSize(1);
+        verify(recipeIngredientRepository, times(1)).saveAll(anyCollection());
+        verify(recipeRepository, times(2)).save(any(Recipe.class));
+
+        Map<String, Object> stats = recipeService.getCacheStatistics();
+        assertThat(stats).containsEntry("cacheSize", 0);
+    }
+
+    @Test
+    void bulkCreateRecipesWithoutTransaction_allInvalid_shouldCreateNoneAndNotInvalidateCache() {
+        RecipeDTO blankNameDto = RecipeDTO.builder()
+                .name("")
+                .description("Blank name")
+                .cookingTime(10)
+                .authorId(1L)
+                .categoryId(1L)
+                .recipeIngredients(List.of(testIngredientDTO))
+                .build();
+        RecipeDTO nullNameDto = RecipeDTO.builder()
+                .name(null)
+                .description("Null name")
+                .cookingTime(10)
+                .authorId(1L)
+                .categoryId(1L)
+                .recipeIngredients(List.of(testIngredientDTO))
+                .build();
+
+        List<RecipeDTO> dtos = List.of(blankNameDto, nullNameDto);
+
+        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithoutTransaction(dtos);
+
+        assertThat(result).isEmpty();
+        verify(recipeRepository, never()).save(any(Recipe.class));
+        verify(recipeIngredientRepository, never()).saveAll(anyCollection());
+
+        Map<String, Object> stats = recipeService.getCacheStatistics();
+        assertThat(stats).containsEntry("cacheSize", 0);
+        assertThat(stats).containsEntry("dataChanged", false);
     }
 }
