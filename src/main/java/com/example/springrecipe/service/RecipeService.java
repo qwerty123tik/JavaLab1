@@ -27,11 +27,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -387,23 +387,21 @@ public class RecipeService {
 
     public List<RecipeDTO> bulkCreateRecipesWithoutTransaction(List<RecipeDTO> recipeDTOs) {
         log.info("Массовое создание рецептов (без транзакции)");
-        List<RecipeDTO> createdRecipes = new ArrayList<>();
 
-        recipeDTOs.forEach(dto -> {
-            try {
-                Optional.ofNullable(dto)
-                        .filter(d -> d.getName() != null && !d.getName().isBlank())
-                        .map(this::executeRecipeCreation)
-                        .ifPresent(createdRecipes::add);
-            } catch (Exception e) {
-                log.error("Ошибка при сохранении рецепта '{}': {}",
-                        dto != null ? dto.getName() : "null", e.getMessage());
-            }
-        });
+        List<RecipeDTO> createdRecipes = Optional.ofNullable(recipeDTOs)
+                .orElseGet(List::of)
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(dto -> Optional.ofNullable(dto.getName())
+                        .map(name -> !name.isBlank())
+                        .orElse(false))
+                .map(this::executeRecipeCreation)
+                .toList();
 
-        if (!createdRecipes.isEmpty()) {
-            invalidateCache();
-        }
+        Optional.of(createdRecipes)
+                .filter(list -> !list.isEmpty())
+                .ifPresent(list -> invalidateCache());
+
         return createdRecipes;
     }
 }
