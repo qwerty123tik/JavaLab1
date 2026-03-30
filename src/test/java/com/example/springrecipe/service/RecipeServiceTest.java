@@ -961,7 +961,7 @@ class RecipeServiceTest {
     }
 
     @Test
-    void bulkCreateRecipesWithoutTransaction_withWhitespaceName_shouldBeFiltered() {
+    void bulkCreateRecipesWithTransaction_whitespaceName_shouldThrow() {
         RecipeDTO whitespaceNameDto = RecipeDTO.builder()
                 .name("   ")
                 .description("Whitespace only")
@@ -971,21 +971,10 @@ class RecipeServiceTest {
                 .recipeIngredients(List.of(testIngredientDTO))
                 .build();
 
-        List<RecipeDTO> dtos = List.of(whitespaceNameDto, testRecipeDTO);
+        List<RecipeDTO> dtos = List.of(whitespaceNameDto);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(categoryRepository.findById(1L)).thenReturn(Optional.of(testCategory));
-        when(unitRepository.findByAbbreviation("g")).thenReturn(Optional.of(testUnit));
-        when(ingredientRepository.findByName("Flour")).thenReturn(Optional.empty());
-        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(testIngredient);
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
-        when(mapper.toRecipeDTO(any(Recipe.class))).thenReturn(testRecipeDTO);
-        when(recipeIngredientRepository.saveAll(anyCollection())).thenReturn(Collections.emptyList());
-
-        List<RecipeDTO> result = recipeService.bulkCreateRecipesWithoutTransaction(dtos);
-
-        assertThat(result).hasSize(1);
-        verify(recipeRepository, times(1)).save(any(Recipe.class));
+        assertThatThrownBy(() -> recipeService.bulkCreateRecipesWithTransaction(dtos))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("В списке передан невалидный рецепт (пустое имя)");
     }
-
 }
