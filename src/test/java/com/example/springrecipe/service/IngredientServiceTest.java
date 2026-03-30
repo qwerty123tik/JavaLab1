@@ -138,6 +138,42 @@ class IngredientServiceTest {
     }
 
     @Test
+    void updateIngredient_withUnit_success() {
+        Ingredient existing = new Ingredient();
+        existing.setId(1L);
+
+        IngredientDTO input = dto("Новое");
+        input.setUnitAbbreviation("кг");
+
+        UnitOfMeasure unit = new UnitOfMeasure();
+
+        when(ingredientRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(unitRepository.findByAbbreviation("кг")).thenReturn(Optional.of(unit));
+        when(ingredientRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(mapper.toIngredientDTO(any())).thenReturn(input);
+
+        IngredientDTO result = ingredientService.updateIngredient(1L, input);
+
+        assertEquals("Новое", result.getName());
+        verify(unitRepository).findByAbbreviation("кг");
+    }
+
+    @Test
+    void updateIngredient_unitNotFound() {
+        Ingredient existing = new Ingredient();
+        existing.setId(1L);
+
+        IngredientDTO input = dto("Новое");
+        input.setUnitAbbreviation("кг");
+
+        when(ingredientRepository.findById(1L)).thenReturn(Optional.of(existing));
+        when(unitRepository.findByAbbreviation("кг")).thenReturn(Optional.empty());
+
+        assertThrows(UnitNotFoundException.class,
+                () -> ingredientService.updateIngredient(1L, input));
+    }
+
+    @Test
     void updateIngredient_NotFound() {
         IngredientDTO dto = dto("test");
         when(ingredientRepository.findById(1L)).thenReturn(Optional.empty());

@@ -5,12 +5,14 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Schema(description = "DTO для ингредиента в рецепте")
 public class RecipeIngredientDTO {
     @Schema(description = "ID ингредиента", example = "1", accessMode = Schema.AccessMode.READ_ONLY)

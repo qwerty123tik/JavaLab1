@@ -1,314 +1,41 @@
-2026-03-29 16:48:16.122 [http-nio-8080-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [67]
-2026-03-29 16:48:16.132 [http-nio-8080-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:DOUBLE) <- [200.0]
-2026-03-29 16:48:16.132 [http-nio-8080-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:BIGINT) <- [51]
-2026-03-29 16:48:16.134 [http-nio-8080-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:BIGINT) <- [2]
-2026-03-29 16:48:16.136 [http-nio-8080-exec-3] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
-2026-03-29 16:48:16.138 [http-nio-8080-exec-3] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.bulkCreateRecipesWithoutTransaction(..) executed in 83 ms
-2026-03-29 16:50:38.853 [http-nio-8080-exec-7] WARN  c.e.s.service.RecipeService - УДАЛЕНИЕ РЕЦЕПТА: ID=44
-2026-03-29 16:50:38.854 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
-    select
-        count(*) 
-    from
-        recipes r1_0 
-    where
-        r1_0.id=?
-2026-03-29 16:50:38.854 [http-nio-8080-exec-7] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [44]
-2026-03-29 16:50:38.854 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
-    select
-        r1_0.id,
-        r1_0.author_id,
-        r1_0.category_id,
-        r1_0.cooking_time,
-        r1_0.description,
-        r1_0.name,
-        r2_0.recipe_id,
-        r2_0.id,
-        r2_0.comment,
-        r2_0.rating,
-        r2_0.user_id 
-    from
-        recipes r1_0 
-    left join
-        reviews r2_0 
-            on r1_0.id=r2_0.recipe_id 
-    where
-        r1_0.id=?
-2026-03-29 16:50:38.854 [http-nio-8080-exec-7] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [44]
-2026-03-29 16:50:38.858 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
-    select
-        ri1_0.recipe_id,
-        ri1_0.id,
-        ri1_0.ingredient_id,
-        i1_0.id,
-        i1_0.name,
-        i1_0.unit_id,
-        ri1_0.quantity,
-        u2_0.id,
-        u2_0.abbreviation,
-        u2_0.name 
-    from
-        recipe_ingredients ri1_0 
-    left join
-        ingredients i1_0 
-            on i1_0.id=ri1_0.ingredient_id 
-    left join
-        units_of_measure u2_0 
-            on u2_0.id=ri1_0.unit_id 
-    where
-        ri1_0.recipe_id=?
-2026-03-29 16:50:38.858 [http-nio-8080-exec-7] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [44]
-2026-03-29 16:50:38.862 [http-nio-8080-exec-7] INFO  c.e.s.service.RecipeService - Рецепт ID=44 успешно удален
-2026-03-29 16:50:38.862 [http-nio-8080-exec-7] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
-2026-03-29 16:50:38.862 [http-nio-8080-exec-7] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.deleteRecipe(..) executed in 11 ms
-2026-03-29 16:50:38.862 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
-    delete 
-    from
-        recipe_ingredients 
-    where
-        id=?
-2026-03-29 16:50:38.862 [http-nio-8080-exec-7] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [152]
-2026-03-29 16:50:38.867 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
-    delete 
-    from
-        recipe_ingredients 
-    where
-        id=?
-2026-03-29 16:50:38.867 [http-nio-8080-exec-7] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [153]
-2026-03-29 16:50:38.867 [http-nio-8080-exec-7] DEBUG org.hibernate.SQL - 
-    delete 
-    from
-        recipes 
-    where
-        id=?
-2026-03-29 16:50:38.867 [http-nio-8080-exec-7] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [44]
-2026-03-29 16:50:41.931 [http-nio-8080-exec-8] WARN  c.e.s.service.RecipeService - УДАЛЕНИЕ РЕЦЕПТА: ID=45
-2026-03-29 16:50:41.934 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
-    select
-        count(*) 
-    from
-        recipes r1_0 
-    where
-        r1_0.id=?
-2026-03-29 16:50:41.934 [http-nio-8080-exec-8] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [45]
-2026-03-29 16:50:41.936 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
-    select
-        r1_0.id,
-        r1_0.author_id,
-        r1_0.category_id,
-        r1_0.cooking_time,
-        r1_0.description,
-        r1_0.name,
-        r2_0.recipe_id,
-        r2_0.id,
-        r2_0.comment,
-        r2_0.rating,
-        r2_0.user_id 
-    from
-        recipes r1_0 
-    left join
-        reviews r2_0 
-            on r1_0.id=r2_0.recipe_id 
-    where
-        r1_0.id=?
-2026-03-29 16:50:41.936 [http-nio-8080-exec-8] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [45]
-2026-03-29 16:50:41.937 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
-    select
-        ri1_0.recipe_id,
-        ri1_0.id,
-        ri1_0.ingredient_id,
-        i1_0.id,
-        i1_0.name,
-        i1_0.unit_id,
-        ri1_0.quantity,
-        u2_0.id,
-        u2_0.abbreviation,
-        u2_0.name 
-    from
-        recipe_ingredients ri1_0 
-    left join
-        ingredients i1_0 
-            on i1_0.id=ri1_0.ingredient_id 
-    left join
-        units_of_measure u2_0 
-            on u2_0.id=ri1_0.unit_id 
-    where
-        ri1_0.recipe_id=?
-2026-03-29 16:50:41.937 [http-nio-8080-exec-8] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [45]
-2026-03-29 16:50:41.937 [http-nio-8080-exec-8] INFO  c.e.s.service.RecipeService - Рецепт ID=45 успешно удален
-2026-03-29 16:50:41.937 [http-nio-8080-exec-8] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
-2026-03-29 16:50:41.937 [http-nio-8080-exec-8] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.deleteRecipe(..) executed in 8 ms
-2026-03-29 16:50:41.941 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
-    delete 
-    from
-        recipe_ingredients 
-    where
-        id=?
-2026-03-29 16:50:41.941 [http-nio-8080-exec-8] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [154]
-2026-03-29 16:50:41.941 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
-    delete 
-    from
-        recipes 
-    where
-        id=?
-2026-03-29 16:50:41.941 [http-nio-8080-exec-8] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [45]
-2026-03-29 16:50:45.938 [http-nio-8080-exec-10] WARN  c.e.s.service.RecipeService - УДАЛЕНИЕ РЕЦЕПТА: ID=51
-2026-03-29 16:50:45.938 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
-    select
-        count(*) 
-    from
-        recipes r1_0 
-    where
-        r1_0.id=?
-2026-03-29 16:50:45.938 [http-nio-8080-exec-10] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [51]
-2026-03-29 16:50:45.940 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
-    select
-        r1_0.id,
-        r1_0.author_id,
-        r1_0.category_id,
-        r1_0.cooking_time,
-        r1_0.description,
-        r1_0.name,
-        r2_0.recipe_id,
-        r2_0.id,
-        r2_0.comment,
-        r2_0.rating,
-        r2_0.user_id 
-    from
-        recipes r1_0 
-    left join
-        reviews r2_0 
-            on r1_0.id=r2_0.recipe_id 
-    where
-        r1_0.id=?
-2026-03-29 16:50:45.942 [http-nio-8080-exec-10] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [51]
-2026-03-29 16:50:45.945 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
-    select
-        ri1_0.recipe_id,
-        ri1_0.id,
-        ri1_0.ingredient_id,
-        i1_0.id,
-        i1_0.name,
-        i1_0.unit_id,
-        ri1_0.quantity,
-        u2_0.id,
-        u2_0.abbreviation,
-        u2_0.name 
-    from
-        recipe_ingredients ri1_0 
-    left join
-        ingredients i1_0 
-            on i1_0.id=ri1_0.ingredient_id 
-    left join
-        units_of_measure u2_0 
-            on u2_0.id=ri1_0.unit_id 
-    where
-        ri1_0.recipe_id=?
-2026-03-29 16:50:45.945 [http-nio-8080-exec-10] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [51]
-2026-03-29 16:50:45.945 [http-nio-8080-exec-10] INFO  c.e.s.service.RecipeService - Рецепт ID=51 успешно удален
-2026-03-29 16:50:45.945 [http-nio-8080-exec-10] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
-2026-03-29 16:50:45.945 [http-nio-8080-exec-10] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.deleteRecipe(..) executed in 10 ms
-2026-03-29 16:50:45.945 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
-    delete 
-    from
-        recipe_ingredients 
-    where
-        id=?
-2026-03-29 16:50:45.945 [http-nio-8080-exec-10] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [159]
-2026-03-29 16:50:45.949 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
-    delete 
-    from
-        recipes 
-    where
-        id=?
-2026-03-29 16:50:45.949 [http-nio-8080-exec-10] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [51]
-2026-03-29 16:51:02.022 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-03-29 16:51:02.028 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-03-29 16:51:02.030 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-29 16:51:02.033 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-03-29 16:51:02.040 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2026-03-29 16:56:29.990 [restartedMain] INFO  c.e.s.SpringRecipeApplication - Starting SpringRecipeApplication using Java 25.0.2 with PID 13376 (D:\JavaLabs\Lab1\target\classes started by naast in D:\JavaLabs\Lab1)
-2026-03-29 16:56:29.992 [restartedMain] DEBUG c.e.s.SpringRecipeApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
-2026-03-29 16:56:29.992 [restartedMain] INFO  c.e.s.SpringRecipeApplication - No active profile set, falling back to 1 default profile: "default"
-2026-03-29 16:56:30.030 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-03-29 16:56:30.030 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-03-29 16:56:30.253 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
-2026-03-29 16:56:30.680 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-03-29 16:56:30.725 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 39 ms. Found 7 JPA repository interfaces.
-2026-03-29 16:56:31.240 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-03-29 16:56:31.249 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-03-29 16:56:31.252 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-03-29 16:56:31.252 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
-2026-03-29 16:56:31.280 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1248 ms
-2026-03-29 16:56:31.459 [restartedMain] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-03-29 16:56:31.494 [restartedMain] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
-2026-03-29 16:56:31.762 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-03-29 16:56:31.781 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-03-29 16:56:31.922 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6b2e5d67
-2026-03-29 16:56:31.926 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-03-29 16:56:31.946 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-29 16:56:31.962 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
-	Database JDBC URL [jdbc:postgresql://localhost:5432/recipeSystem_db]
-	Database driver: PostgreSQL JDBC Driver
-	Database dialect: PostgreSQLDialect
-	Database version: 18.3
-	Default catalog/schema: recipeSystem_db/public
-	Autocommit mode: undefined/unknown
-	Isolation level: READ_COMMITTED [default READ_COMMITTED]
-	JDBC fetch size: none
-	Pool: DataSourceConnectionProvider
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-03-29 16:56:32.730 [restartedMain] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-03-29 16:56:32.803 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-03-29 16:56:32.889 [restartedMain] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-03-29 16:56:34.163 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-03-29 16:56:34.174 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2026-03-29 16:56:34.179 [restartedMain] INFO  c.e.s.SpringRecipeApplication - Started SpringRecipeApplication in 4.575 seconds (process running for 4.966)
-2026-03-29 16:56:39.608 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-03-29 16:56:39.620 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-03-29 16:56:39.623 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-29 16:56:39.628 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-03-29 16:56:39.638 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2026-03-29 21:43:11.715 [restartedMain] INFO  c.e.s.SpringRecipeApplication - Starting SpringRecipeApplication using Java 25.0.2 with PID 7488 (D:\JavaLabs\Lab1\target\classes started by naast in D:\JavaLabs\Lab1)
-2026-03-29 21:43:11.717 [restartedMain] DEBUG c.e.s.SpringRecipeApplication - Running with Spring Boot v4.0.2, Spring v7.0.3
-2026-03-29 21:43:11.717 [restartedMain] INFO  c.e.s.SpringRecipeApplication - No active profile set, falling back to 1 default profile: "default"
-2026-03-29 21:43:11.760 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
-2026-03-29 21:43:11.760 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
-2026-03-29 21:43:12.041 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 9.0.1.Final
-2026-03-29 21:43:12.640 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-03-29 21:43:12.696 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 48 ms. Found 7 JPA repository interfaces.
-2026-03-29 21:43:13.290 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
-2026-03-29 21:43:13.300 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-2026-03-29 21:43:13.302 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-03-29 21:43:13.302 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.15]
-2026-03-29 21:43:13.338 [restartedMain] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1578 ms
-2026-03-29 21:43:13.503 [restartedMain] INFO  org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-03-29 21:43:13.548 [restartedMain] INFO  org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.2.1.Final
-2026-03-29 21:43:13.855 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-03-29 21:43:13.882 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
-2026-03-29 21:43:14.044 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3e759111
-2026-03-29 21:43:14.045 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
-2026-03-29 21:43:14.094 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2026-03-29 21:43:14.117 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
-	Database JDBC URL [jdbc:postgresql://localhost:5432/recipeSystem_db]
-	Database driver: PostgreSQL JDBC Driver
-	Database dialect: PostgreSQLDialect
-	Database version: 18.3
-	Default catalog/schema: recipeSystem_db/public
-	Autocommit mode: undefined/unknown
-	Isolation level: READ_COMMITTED [default READ_COMMITTED]
-	JDBC fetch size: none
-	Pool: DataSourceConnectionProvider
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-03-29 21:43:14.954 [restartedMain] INFO  org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-03-29 21:43:15.059 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-03-29 21:43:15.174 [restartedMain] INFO  o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-03-29 21:43:16.622 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-2026-03-29 21:43:16.637 [restartedMain] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
-2026-03-29 21:43:16.643 [restartedMain] INFO  c.e.s.SpringRecipeApplication - Started SpringRecipeApplication in 5.429 seconds (process running for 5.9)
-2026-03-29 21:43:22.349 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-03-29 21:43:22.366 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-03-29 21:43:22.372 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-29 21:43:22.376 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-03-29 21:43:22.385 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-30 08:48:07.999 [main] WARN  c.e.s.service.ReviewService - Отзыв с ID 1 не найден для обновления
+2026-03-30 08:48:08.005 [main] INFO  c.e.s.service.ReviewService - Найден отзыв ID=1 с рейтингом 0
+2026-03-30 08:48:08.010 [main] INFO  c.e.s.service.ReviewService - Обновление отзыва: ID=1, новый рейтинг=5
+2026-03-30 08:48:08.011 [main] INFO  c.e.s.service.ReviewService - Отзыв ID=1 успешно обновлен
+2026-03-30 08:48:08.014 [main] INFO  c.e.s.service.ReviewService - Создание нового отзыва: рейтинг=5, рецептId=1, пользовательId=1
+2026-03-30 08:48:08.015 [main] INFO  c.e.s.service.ReviewService - Отзыв успешно создан: ID=null, рейтинг=5
+2026-03-30 08:48:08.019 [main] INFO  c.e.s.service.ReviewService - Найдено 1 отзывов пользователя ID 1
+2026-03-30 08:48:08.029 [main] WARN  c.e.s.service.IngredientService - Ингредиент с ID 1 не найден
+2026-03-30 08:48:08.032 [main] INFO  c.e.s.service.IngredientService - Найдено 1 ингредиентов
+2026-03-30 08:48:08.035 [main] INFO  c.e.s.service.IngredientService - Создание нового ингредиента: название='Мука'
+2026-03-30 08:48:08.035 [main] INFO  c.e.s.service.IngredientService - Ингредиент успешно создан: ID=null, название='Мука'
+2026-03-30 08:48:08.038 [main] INFO  c.e.s.service.IngredientService - Создание нового ингредиента: название='Молоко'
+2026-03-30 08:48:08.039 [main] ERROR c.e.s.service.IngredientService - Единица измерения 'мл' не найдена
+2026-03-30 08:48:08.041 [main] WARN  c.e.s.service.IngredientService - УДАЛЕНИЕ ИНГРЕДИЕНТА: ID=1
+2026-03-30 08:48:08.041 [main] INFO  c.e.s.service.IngredientService - Ингредиент ID=1 успешно удален
+2026-03-30 08:48:08.044 [main] INFO  c.e.s.service.IngredientService - Создание нового ингредиента: название='Молоко'
+2026-03-30 08:48:08.045 [main] INFO  c.e.s.service.IngredientService - Ингредиент успешно создан: ID=null, название='Молоко'
+2026-03-30 08:48:08.048 [main] WARN  c.e.s.service.IngredientService - УДАЛЕНИЕ ИНГРЕДИЕНТА: ID=1
+2026-03-30 08:48:08.049 [main] WARN  c.e.s.service.IngredientService - Ингредиент с ID 1 не найден для удаления
+2026-03-30 08:48:08.060 [main] INFO  c.e.s.service.IngredientService - Найден ингредиент: Соль (ID: 1)
+2026-03-30 08:48:08.065 [main] WARN  c.e.s.service.IngredientService - УДАЛЕНИЕ ИНГРЕДИЕНТА: ID=1
+2026-03-30 08:48:08.066 [main] WARN  c.e.s.service.IngredientService - Ингредиент ID=1 используется в рецептах, удаление запрещено
+2026-03-30 08:48:08.072 [main] INFO  c.e.springrecipe.service.UserService - Создание нового пользователя: userName='tiki', email='tiikitak@mail.com'
+2026-03-30 08:48:08.072 [main] WARN  c.e.springrecipe.service.UserService - Email 'tiikitak@mail.com' уже используется
+2026-03-30 08:48:08.075 [main] WARN  c.e.springrecipe.service.UserService - УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ: ID=1
+2026-03-30 08:48:08.075 [main] INFO  c.e.springrecipe.service.UserService - Пользователь ID=1 успешно удален
+2026-03-30 08:48:08.079 [main] INFO  c.e.springrecipe.service.UserService - Обновление пользователя: ID=1, userName='tiki'
+2026-03-30 08:48:08.079 [main] INFO  c.e.springrecipe.service.UserService - Пользователь ID=1 успешно обновлен
+2026-03-30 08:48:08.081 [main] WARN  c.e.springrecipe.service.UserService - Пользователь с ID 1 не найден
+2026-03-30 08:48:08.084 [main] INFO  c.e.springrecipe.service.UserService - Найдено 1 пользователей
+2026-03-30 08:48:08.086 [main] WARN  c.e.springrecipe.service.UserService - УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ: ID=1
+2026-03-30 08:48:08.086 [main] WARN  c.e.springrecipe.service.UserService - Пользователь с ID 1 не найден для удаления
+2026-03-30 08:48:08.088 [main] INFO  c.e.springrecipe.service.UserService - Найдено 1 пользователей по запросу 'tiki'
+2026-03-30 08:48:08.089 [main] INFO  c.e.springrecipe.service.UserService - Обновление пользователя: ID=1, userName='tiki'
+2026-03-30 08:48:08.089 [main] WARN  c.e.springrecipe.service.UserService - Пользователь с ID 1 не найден для обновления
+2026-03-30 08:48:08.091 [main] INFO  c.e.springrecipe.service.UserService - Создание нового пользователя: userName='tiki', email='tiikitak@mail.com'
+2026-03-30 08:48:08.091 [main] INFO  c.e.springrecipe.service.UserService - Пользователь успешно создан: ID=null, userName='tiki'
+2026-03-30 08:48:08.108 [main] INFO  c.e.springrecipe.service.UserService - Найден пользователь: tiki (ID: 1)
+2026-03-30 08:48:08.119 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30 08:48:08.125 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-30 08:48:08.139 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
