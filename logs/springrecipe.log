@@ -1,41 +1,154 @@
-2026-03-30 08:48:07.999 [main] WARN  c.e.s.service.ReviewService - Отзыв с ID 1 не найден для обновления
-2026-03-30 08:48:08.005 [main] INFO  c.e.s.service.ReviewService - Найден отзыв ID=1 с рейтингом 0
-2026-03-30 08:48:08.010 [main] INFO  c.e.s.service.ReviewService - Обновление отзыва: ID=1, новый рейтинг=5
-2026-03-30 08:48:08.011 [main] INFO  c.e.s.service.ReviewService - Отзыв ID=1 успешно обновлен
-2026-03-30 08:48:08.014 [main] INFO  c.e.s.service.ReviewService - Создание нового отзыва: рейтинг=5, рецептId=1, пользовательId=1
-2026-03-30 08:48:08.015 [main] INFO  c.e.s.service.ReviewService - Отзыв успешно создан: ID=null, рейтинг=5
-2026-03-30 08:48:08.019 [main] INFO  c.e.s.service.ReviewService - Найдено 1 отзывов пользователя ID 1
-2026-03-30 08:48:08.029 [main] WARN  c.e.s.service.IngredientService - Ингредиент с ID 1 не найден
-2026-03-30 08:48:08.032 [main] INFO  c.e.s.service.IngredientService - Найдено 1 ингредиентов
-2026-03-30 08:48:08.035 [main] INFO  c.e.s.service.IngredientService - Создание нового ингредиента: название='Мука'
-2026-03-30 08:48:08.035 [main] INFO  c.e.s.service.IngredientService - Ингредиент успешно создан: ID=null, название='Мука'
-2026-03-30 08:48:08.038 [main] INFO  c.e.s.service.IngredientService - Создание нового ингредиента: название='Молоко'
-2026-03-30 08:48:08.039 [main] ERROR c.e.s.service.IngredientService - Единица измерения 'мл' не найдена
-2026-03-30 08:48:08.041 [main] WARN  c.e.s.service.IngredientService - УДАЛЕНИЕ ИНГРЕДИЕНТА: ID=1
-2026-03-30 08:48:08.041 [main] INFO  c.e.s.service.IngredientService - Ингредиент ID=1 успешно удален
-2026-03-30 08:48:08.044 [main] INFO  c.e.s.service.IngredientService - Создание нового ингредиента: название='Молоко'
-2026-03-30 08:48:08.045 [main] INFO  c.e.s.service.IngredientService - Ингредиент успешно создан: ID=null, название='Молоко'
-2026-03-30 08:48:08.048 [main] WARN  c.e.s.service.IngredientService - УДАЛЕНИЕ ИНГРЕДИЕНТА: ID=1
-2026-03-30 08:48:08.049 [main] WARN  c.e.s.service.IngredientService - Ингредиент с ID 1 не найден для удаления
-2026-03-30 08:48:08.060 [main] INFO  c.e.s.service.IngredientService - Найден ингредиент: Соль (ID: 1)
-2026-03-30 08:48:08.065 [main] WARN  c.e.s.service.IngredientService - УДАЛЕНИЕ ИНГРЕДИЕНТА: ID=1
-2026-03-30 08:48:08.066 [main] WARN  c.e.s.service.IngredientService - Ингредиент ID=1 используется в рецептах, удаление запрещено
-2026-03-30 08:48:08.072 [main] INFO  c.e.springrecipe.service.UserService - Создание нового пользователя: userName='tiki', email='tiikitak@mail.com'
-2026-03-30 08:48:08.072 [main] WARN  c.e.springrecipe.service.UserService - Email 'tiikitak@mail.com' уже используется
-2026-03-30 08:48:08.075 [main] WARN  c.e.springrecipe.service.UserService - УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ: ID=1
-2026-03-30 08:48:08.075 [main] INFO  c.e.springrecipe.service.UserService - Пользователь ID=1 успешно удален
-2026-03-30 08:48:08.079 [main] INFO  c.e.springrecipe.service.UserService - Обновление пользователя: ID=1, userName='tiki'
-2026-03-30 08:48:08.079 [main] INFO  c.e.springrecipe.service.UserService - Пользователь ID=1 успешно обновлен
-2026-03-30 08:48:08.081 [main] WARN  c.e.springrecipe.service.UserService - Пользователь с ID 1 не найден
-2026-03-30 08:48:08.084 [main] INFO  c.e.springrecipe.service.UserService - Найдено 1 пользователей
-2026-03-30 08:48:08.086 [main] WARN  c.e.springrecipe.service.UserService - УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ: ID=1
-2026-03-30 08:48:08.086 [main] WARN  c.e.springrecipe.service.UserService - Пользователь с ID 1 не найден для удаления
-2026-03-30 08:48:08.088 [main] INFO  c.e.springrecipe.service.UserService - Найдено 1 пользователей по запросу 'tiki'
-2026-03-30 08:48:08.089 [main] INFO  c.e.springrecipe.service.UserService - Обновление пользователя: ID=1, userName='tiki'
-2026-03-30 08:48:08.089 [main] WARN  c.e.springrecipe.service.UserService - Пользователь с ID 1 не найден для обновления
-2026-03-30 08:48:08.091 [main] INFO  c.e.springrecipe.service.UserService - Создание нового пользователя: userName='tiki', email='tiikitak@mail.com'
-2026-03-30 08:48:08.091 [main] INFO  c.e.springrecipe.service.UserService - Пользователь успешно создан: ID=null, userName='tiki'
-2026-03-30 08:48:08.108 [main] INFO  c.e.springrecipe.service.UserService - Найден пользователь: tiki (ID: 1)
-2026-03-30 08:48:08.119 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-30 08:48:08.125 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2026-03-30 08:48:08.139 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-04-12 22:22:04.680 [ForkJoinPool.commonPool-worker-2] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [г]
+2026-04-12 22:22:04.680 [ForkJoinPool.commonPool-worker-11] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:VARCHAR) <- [Нагрузочный рецепт]
+2026-04-12 22:22:04.680 [ForkJoinPool.commonPool-worker-6] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:BIGINT) <- [2]
+2026-04-12 22:22:04.680 [ForkJoinPool.commonPool-worker-3] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        recipe_ingredients
+        (ingredient_id, quantity, recipe_id, unit_id) 
+    values
+        (?, ?, ?, ?)
+2026-04-12 22:22:04.680 [ForkJoinPool.commonPool-worker-1] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        recipe_ingredients
+        (ingredient_id, quantity, recipe_id, unit_id) 
+    values
+        (?, ?, ?, ?)
+2026-04-12 22:22:04.680 [ForkJoinPool.commonPool-worker-4] DEBUG org.hibernate.SQL - 
+    select
+        uom1_0.id,
+        uom1_0.abbreviation,
+        uom1_0.name 
+    from
+        units_of_measure uom1_0 
+    where
+        uom1_0.abbreviation=?
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [50]
+2026-04-12 22:22:04.680 [ForkJoinPool.commonPool-worker-10] INFO  c.e.springrecipe.service.TaskService - Задача a78cf532-936e-4c97-956e-44fed38c747d завершена успешно
+2026-04-12 22:22:04.680 [ForkJoinPool.commonPool-worker-5] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        recipe_ingredients
+        (ingredient_id, quantity, recipe_id, unit_id) 
+    values
+        (?, ?, ?, ?)
+2026-04-12 22:22:04.681 [ForkJoinPool.commonPool-worker-8] INFO  c.e.springrecipe.service.TaskService - Задача de80f6de-2d28-4ebb-8eb2-5d705a69ba91 завершена успешно
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [50]
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:DOUBLE) <- [200.0]
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:BIGINT) <- [54625]
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:BIGINT) <- [2]
+2026-04-12 22:22:04.778 [ForkJoinPool.commonPool-worker-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [50]
+2026-04-12 22:22:04.778 [ForkJoinPool.commonPool-worker-2] DEBUG org.hibernate.SQL - 
+    select
+        i1_0.id,
+        i1_0.name,
+        i1_0.unit_id 
+    from
+        ingredients i1_0 
+    where
+        i1_0.name=?
+2026-04-12 22:22:04.778 [ForkJoinPool.commonPool-worker-6] INFO  c.e.s.service.RecipeService - Рецепт успешно создан: ID=54624, название='Нагрузочный рецепт'
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-2] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [Мука]
+2026-04-12 22:22:04.778 [ForkJoinPool.commonPool-worker-11] DEBUG org.hibernate.SQL - 
+    select
+        uom1_0.id,
+        uom1_0.abbreviation,
+        uom1_0.name 
+    from
+        units_of_measure uom1_0 
+    where
+        uom1_0.abbreviation=?
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:DOUBLE) <- [200.0]
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-4] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [г]
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:BIGINT) <- [54626]
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:BIGINT) <- [2]
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:DOUBLE) <- [200.0]
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-6] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-11] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [г]
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-6] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.createRecipe(..) executed in 210 ms
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-5] INFO  c.e.s.service.RecipeService - Рецепт успешно создан: ID=54625, название='Нагрузочный рецепт'
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-5] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-5] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.createRecipe(..) executed in 205 ms
+2026-04-12 22:22:04.779 [ForkJoinPool.commonPool-worker-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:BIGINT) <- [54627]
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-4] DEBUG org.hibernate.SQL - 
+    select
+        i1_0.id,
+        i1_0.name,
+        i1_0.unit_id 
+    from
+        ingredients i1_0 
+    where
+        i1_0.name=?
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-1] INFO  c.e.s.service.RecipeService - Рецепт успешно создан: ID=54626, название='Нагрузочный рецепт'
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-2] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        recipe_ingredients
+        (ingredient_id, quantity, recipe_id, unit_id) 
+    values
+        (?, ?, ?, ?)
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-4] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [Мука]
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-2] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [50]
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-1] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-11] DEBUG org.hibernate.SQL - 
+    select
+        i1_0.id,
+        i1_0.name,
+        i1_0.unit_id 
+    from
+        ingredients i1_0 
+    where
+        i1_0.name=?
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-2] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:DOUBLE) <- [200.0]
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-1] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.createRecipe(..) executed in 205 ms
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-2] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:BIGINT) <- [54628]
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-11] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [Мука]
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:BIGINT) <- [2]
+2026-04-12 22:22:04.780 [ForkJoinPool.commonPool-worker-2] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:BIGINT) <- [2]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-4] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        recipe_ingredients
+        (ingredient_id, quantity, recipe_id, unit_id) 
+    values
+        (?, ?, ?, ?)
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-4] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [50]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-4] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:DOUBLE) <- [200.0]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-6] INFO  c.e.springrecipe.service.TaskService - Задача 856f102e-5be2-4505-aa0e-dc43c3c5e61b завершена успешно
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-4] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:BIGINT) <- [54629]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-11] DEBUG org.hibernate.SQL - 
+    insert 
+    into
+        recipe_ingredients
+        (ingredient_id, quantity, recipe_id, unit_id) 
+    values
+        (?, ?, ?, ?)
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-5] INFO  c.e.springrecipe.service.TaskService - Задача 6bdd8004-183c-4d05-b866-b37a226e149b завершена успешно
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-11] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:BIGINT) <- [50]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-4] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:BIGINT) <- [2]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-2] INFO  c.e.s.service.RecipeService - Рецепт успешно создан: ID=54628, название='Нагрузочный рецепт'
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-11] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:DOUBLE) <- [200.0]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-2] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-3] INFO  c.e.s.service.RecipeService - Рецепт успешно создан: ID=54627, название='Нагрузочный рецепт'
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-1] INFO  c.e.springrecipe.service.TaskService - Задача 2390e450-701a-4cc0-aff5-eead360b9716 завершена успешно
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-3] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-2] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.createRecipe(..) executed in 205 ms
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-11] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:BIGINT) <- [54630]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-3] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.createRecipe(..) executed in 105 ms
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-11] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:BIGINT) <- [2]
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-4] INFO  c.e.s.service.RecipeService - Рецепт успешно создан: ID=54629, название='Нагрузочный рецепт'
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-4] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
+2026-04-12 22:22:04.781 [ForkJoinPool.commonPool-worker-4] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.createRecipe(..) executed in 206 ms
+2026-04-12 22:22:04.783 [ForkJoinPool.commonPool-worker-11] INFO  c.e.s.service.RecipeService - Рецепт успешно создан: ID=54630, название='Нагрузочный рецепт'
+2026-04-12 22:22:04.783 [ForkJoinPool.commonPool-worker-11] INFO  c.e.s.service.RecipeService - Кэш успешно инвалидирован
+2026-04-12 22:22:04.783 [ForkJoinPool.commonPool-worker-11] DEBUG c.e.s.aspect.LoggingAspect - RecipeService.createRecipe(..) executed in 207 ms
+2026-04-12 22:22:04.783 [ForkJoinPool.commonPool-worker-2] INFO  c.e.springrecipe.service.TaskService - Задача 8de9851f-9e58-4e6c-992d-46ab0084fa91 завершена успешно
+2026-04-12 22:22:04.783 [ForkJoinPool.commonPool-worker-3] INFO  c.e.springrecipe.service.TaskService - Задача a3cd4dbc-e0d9-4ea5-a947-9cb54561277b завершена успешно
+2026-04-12 22:22:04.783 [ForkJoinPool.commonPool-worker-4] INFO  c.e.springrecipe.service.TaskService - Задача 2d4a7009-1e7f-42b9-b2f1-7ce7e8c718a8 завершена успешно
+2026-04-12 22:22:04.783 [ForkJoinPool.commonPool-worker-11] INFO  c.e.springrecipe.service.TaskService - Задача 8de14b23-2dc2-489f-9a85-4a797f4c2a31 завершена успешно
+2026-04-12 22:23:04.627 [SpringApplicationShutdownHook] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-04-12 22:23:04.637 [tomcat-shutdown] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-04-12 22:23:04.652 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-12 22:23:04.657 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-04-12 22:23:04.673 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
