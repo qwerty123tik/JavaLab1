@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -22,7 +23,7 @@ public class TaskService {
     public String startAsyncProcessing(List<RecipeDTO> recipes) {
         String taskId = UUID.randomUUID().toString();
         statusMap.put(taskId, "IN_PROGRESS");
-        processRecipes(taskId, recipes);
+        CompletableFuture.runAsync(() -> processRecipes(taskId, recipes));
         return taskId;
     }
 
