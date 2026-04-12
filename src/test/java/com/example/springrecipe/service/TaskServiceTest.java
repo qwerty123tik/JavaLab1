@@ -19,7 +19,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class TaskServiceTest {
+class TaskServiceTest {
     @Mock
     private RecipeService recipeService;
 
@@ -44,9 +44,12 @@ public class TaskServiceTest {
      void startAsyncProcessing_shouldReturnTaskIdAndSetStatus() {
         String taskId = taskService.startAsyncProcessing(testRecipes);
 
-        assertThat(taskId).isNotNull();
-        assertThat(taskId).isNotEmpty();
-        assertThat(taskService.getStatus(taskId)).isEqualTo("IN_PROGRESS");
+        assertThat(taskId)
+                .isNotNull()
+                .isNotEmpty();
+
+        assertThat(taskService.getStatus(taskId))
+                .isEqualTo("IN_PROGRESS");
     }
 
     @Test
@@ -61,7 +64,8 @@ public class TaskServiceTest {
 
         taskService.processRecipes(taskId, testRecipes);
 
-        assertThat(statusMap.get(taskId)).isEqualTo("DONE");
+        assertThat(statusMap)
+                .containsEntry(taskId, "DONE");
         verify(recipeService, times(testRecipes.size())).createRecipe(any(RecipeDTO.class));
     }
 
@@ -77,7 +81,8 @@ public class TaskServiceTest {
 
         taskService.processRecipes(taskId, testRecipes);
 
-        assertThat(statusMap.get(taskId)).isEqualTo("FAILED");
+        assertThat(statusMap)
+                .containsEntry(taskId, "FAILED");
         verify(recipeService, times(1)).createRecipe(any(RecipeDTO.class));
     }
 
@@ -98,7 +103,7 @@ public class TaskServiceTest {
     }
 
     @Test
-    void startAsyncProcessing_shouldTriggerAsyncProcessing() throws Exception {
+    void startAsyncProcessing_shouldTriggerAsyncProcessing() {
         String taskId = taskService.startAsyncProcessing(testRecipes);
 
         assertThat(taskId).isNotNull();

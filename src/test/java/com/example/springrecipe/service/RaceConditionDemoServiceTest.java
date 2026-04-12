@@ -5,13 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Method;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 class RaceConditionDemoServiceTest {
 
     private RaceConditionDemoService service;
@@ -62,9 +56,7 @@ class RaceConditionDemoServiceTest {
         assertThat(result.getMode()).isEqualTo("unsafe");
         assertThat(result.getExpected())
                 .isEqualTo(result.getThreadCount() * result.getIncrementsPerThread());
-        // Из-за race condition фактическое значение обычно меньше ожидаемого
         assertThat(result.getActual()).isLessThanOrEqualTo(result.getExpected());
-        // Иногда может быть равно, но редко – повторяем тест 5 раз, чтобы почти всегда поймать потерю
     }
 
     @Test
@@ -79,7 +71,6 @@ class RaceConditionDemoServiceTest {
                     .hasMessageContaining("Поток был прерван");
 
         } finally {
-            // очищаем interrupt flag чтобы не сломать другие тесты
             Thread.interrupted();
         }
     }
