@@ -30,16 +30,14 @@ public class TaskService {
     @Async("taskExecutor")
     public void processRecipes(String taskId, List<RecipeDTO> recipes) {
         try {
-            Thread.sleep(10_000);
             for (RecipeDTO dto : recipes) {
+                if (dto.getName() == null || dto.getName().isBlank()) {
+                    throw new IllegalArgumentException("Рецепт с пустым именем (FAILED)");
+                }
                 recipeService.createRecipe(dto);
             }
             statusMap.put(taskId, "DONE");
             log.info("Задача {} завершена успешно", taskId);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            statusMap.put(taskId, "FAILED");
-            log.error("Задача {} прервана", taskId);
         } catch (Exception e) {
             statusMap.put(taskId, "FAILED");
             log.error("Задача {} завершена с ошибкой: {}", taskId, e.getMessage());
