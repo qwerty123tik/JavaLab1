@@ -110,6 +110,7 @@ class TaskServiceTest {
         await().atMost(2, TimeUnit.SECONDS)
                 .until(() -> taskService.getStatus(taskId).equals("DONE"));
     }
+
     @Test
     void processRecipes_withEmptyName_shouldSetStatusFailed() {
         RecipeDTO emptyNameRecipe = new RecipeDTO();
@@ -118,6 +119,23 @@ class TaskServiceTest {
         emptyNameRecipe.setAuthorId(1L);
         emptyNameRecipe.setCategoryId(1L);
         List<RecipeDTO> recipes = List.of(emptyNameRecipe);
+
+        String taskId = taskService.startAsyncProcessing(recipes);
+
+        await().atMost(2, TimeUnit.SECONDS)
+                .until(() -> taskService.getStatus(taskId).equals("FAILED"));
+
+        verify(recipeService, never()).createRecipe(any(RecipeDTO.class));
+    }
+
+    @Test
+    void processRecipes_withNullName_shouldSetStatusFailed() {
+        RecipeDTO nullNameRecipe = new RecipeDTO();
+        nullNameRecipe.setName(null);
+        nullNameRecipe.setCookingTime(30);
+        nullNameRecipe.setAuthorId(1L);
+        nullNameRecipe.setCategoryId(1L);
+        List<RecipeDTO> recipes = List.of(nullNameRecipe);
 
         String taskId = taskService.startAsyncProcessing(recipes);
 
