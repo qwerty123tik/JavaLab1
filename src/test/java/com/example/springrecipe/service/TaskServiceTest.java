@@ -11,12 +11,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
@@ -103,16 +103,27 @@ class TaskServiceTest {
     }
 
     @Test
-    void startAsyncProcessing_shouldTriggerAsyncProcessing() throws InterruptedException {
+    void startAsyncProcessing_shouldTriggerAsyncProcessing() {
         String taskId = taskService.startAsyncProcessing(testRecipes);
         assertThat(taskId).isNotNull();
-        long start = System.currentTimeMillis();
-        long timeout = 2000;
-        String status = taskService.getStatus(taskId);
-        while (!"DONE".equals(status) && (System.currentTimeMillis() - start) < timeout) {
-            Thread.sleep(50);
-            status = taskService.getStatus(taskId);
-        }
-        assertThat(status).isEqualTo("DONE");
+
+        await().atMost(2, TimeUnit.SECONDS)
+                .until(() -> taskService.getStatus(taskId).equals("DONE"));
+    }
+    @Test
+    void processRecipes_withEmptyName_shouldSetStatusFailed() {
+        RecipeDTO emptyNameRecipe = new RecipeDTO();
+        emptyNameRecipe.setName("");
+        emptyNameRecipe.setCookingTime(30);
+        emptyNameRecipe.setAuthorId(1L);
+        emptyNameRecipe.setCategoryId(1L);
+        List<RecipeDTO> recipes = List.of(emptyNameRecipe);
+
+        String taskId = taskService.startAsyncProcessing(recipes);
+
+        await().atMost(2, TimeUnit.SECONDS)
+                .until(() -> taskService.getStatus(taskId).equals("FAILED"));
+
+        verify(recipeService, never()).createRecipe(any(RecipeDTO.class));
     }
 }

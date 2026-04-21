@@ -3,7 +3,6 @@ package com.example.springrecipe.service;
 import com.example.springrecipe.dto.RecipeDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +26,6 @@ public class TaskService {
         return taskId;
     }
 
-    @Async("taskExecutor")
     public void processRecipes(String taskId, List<RecipeDTO> recipes) {
         try {
             for (RecipeDTO dto : recipes) {
