@@ -1,6 +1,7 @@
 package com.example.springrecipe.service;
 import com.example.springrecipe.dto.RaceConditionDemoDTO;
 import com.example.springrecipe.exceptions.RaceConditionException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,11 @@ class RaceConditionDemoServiceTest {
     @BeforeEach
     void setUp() {
         service = new RaceConditionDemoService();
+    }
+
+    @AfterEach
+    void clearInterruptFlag() {
+        Thread.interrupted();
     }
 
     @Test
@@ -41,6 +47,7 @@ class RaceConditionDemoServiceTest {
     @Test
     void demonstrateSolution_shouldWorkCorrectly() {
         RaceConditionDemoDTO result = service.demonstrateSolution();
+
         assertThat(result).isNotNull();
         assertThat(result.getMode()).isEqualTo("atomic");
         assertThat(result.getExpected())
@@ -52,13 +59,13 @@ class RaceConditionDemoServiceTest {
     @RepeatedTest(5)
     void demonstrateRaceCondition_shouldLoseIncrements() {
         RaceConditionDemoDTO result = service.demonstrateRaceCondition();
+
         assertThat(result).isNotNull();
         assertThat(result.getMode()).isEqualTo("unsafe");
         assertThat(result.getExpected())
                 .isEqualTo(result.getThreadCount() * result.getIncrementsPerThread());
         assertThat(result.getActual()).isLessThanOrEqualTo(result.getExpected());
     }
-
 
     @Test
     void runTest_shouldThrowRaceConditionException_whenInterrupted() {

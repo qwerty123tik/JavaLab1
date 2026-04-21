@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -72,8 +71,12 @@ public class RaceConditionDemoService {
         }
 
         executor.shutdown();
+
         try {
-            executor.awaitTermination(1, TimeUnit.MINUTES);
+            if (!executor.awaitTermination(1, java.util.concurrent.TimeUnit.MINUTES)) {
+                throw new RaceConditionException("Потоки не завершились вовремя");
+            }
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RaceConditionException("Поток был прерван", e);
@@ -87,7 +90,14 @@ public class RaceConditionDemoService {
         log.info("Результат: {} (ожидалось: {}), потеряно: {}, время: {} ms",
                 actual, expectedTotal, lost, durationMs);
 
-        return new RaceConditionDemoDTO(mode, threadCount, incrementsPerThread,
-                expectedTotal, actual, lost, durationMs);
+        return new RaceConditionDemoDTO(
+                mode,
+                threadCount,
+                incrementsPerThread,
+                expectedTotal,
+                actual,
+                lost,
+                durationMs
+        );
     }
 }
