@@ -59,21 +59,12 @@ class RaceConditionDemoServiceTest {
         assertThat(result.getActual()).isLessThanOrEqualTo(result.getExpected());
     }
 
-@Test
-void runTest_shouldThrowRaceConditionException_whenInterrupted() throws InterruptedException {
-    java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
-    Thread t = new Thread(() -> {
-        try {
-            latch.countDown();
-            service.demonstrateSolution();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    });
-    t.start();
-    latch.await();
-    t.interrupt();
-    t.join();
-    assertThatThrownBy(() -> t.join()).hasCauseInstanceOf(RaceConditionException.class);
-}
+
+    @Test
+    void runTest_shouldThrowRaceConditionException_whenInterrupted() {
+        Thread.currentThread().interrupt();
+
+        assertThatThrownBy(() -> service.demonstrateSolution())
+                .isInstanceOf(RaceConditionException.class);
+    }
 }
