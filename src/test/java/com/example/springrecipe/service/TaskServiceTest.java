@@ -103,10 +103,16 @@ class TaskServiceTest {
     }
 
     @Test
-    void startAsyncProcessing_shouldTriggerAsyncProcessing() {
+    void startAsyncProcessing_shouldTriggerAsyncProcessing() throws InterruptedException {
         String taskId = taskService.startAsyncProcessing(testRecipes);
-
         assertThat(taskId).isNotNull();
-        assertThat(taskService.getStatus(taskId)).isEqualTo("IN_PROGRESS");
+        long start = System.currentTimeMillis();
+        long timeout = 2000;
+        String status = taskService.getStatus(taskId);
+        while (!"DONE".equals(status) && (System.currentTimeMillis() - start) < timeout) {
+            Thread.sleep(50);
+            status = taskService.getStatus(taskId);
+        }
+        assertThat(status).isEqualTo("DONE");
     }
 }
