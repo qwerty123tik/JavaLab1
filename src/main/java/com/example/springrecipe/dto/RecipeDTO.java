@@ -60,4 +60,6 @@ public class RecipeDTO {
 
     @Schema(description = "Список названий ингредиентов", accessMode = Schema.AccessMode.READ_ONLY)
     private List<String> ingredientNames;
+
+    private String imageUrl;
 }

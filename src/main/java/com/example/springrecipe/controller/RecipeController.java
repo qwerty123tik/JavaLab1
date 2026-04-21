@@ -79,16 +79,12 @@ public class RecipeController {
     )
     @GetMapping("/search/jpql")
     public ResponseEntity<Page<RecipeDTO>> searchRecipesJPQL(
-            @Parameter(description = "Название ингредиента (частичное совпадение)")
             @RequestParam(required = false) String ingredient,
-            @Parameter(description = "Название категории (частичное совпадение)")
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String title,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
 
-        String ingredientParam = (ingredient == null || ingredient.isEmpty()) ? null : ingredient;
-        String categoryParam = (category == null || category.isEmpty()) ? null : category;
-
-        Page<RecipeDTO> result = recipeService.searchRecipesJPQL(ingredientParam, categoryParam, pageable);
+        Page<RecipeDTO> result = recipeService.searchRecipesJPQL(ingredient, category, title, pageable);
         return ResponseEntity.ok(result);
     }
 
@@ -98,13 +94,11 @@ public class RecipeController {
     )
     @GetMapping("/search/native")
     public ResponseEntity<Page<RecipeDTO>> searchRecipesNative(
-            @Parameter(description = "Название ингредиента")
             @RequestParam(required = false) String ingredient,
-            @Parameter(description = "Название категории")
             @RequestParam(required = false) String category,
+            @RequestParam(required = false) String title,
             @PageableDefault(size = 10, sort = "name") Pageable pageable) {
-
-        Page<RecipeDTO> result = recipeService.searchRecipesNative(ingredient, category, pageable);
+        Page<RecipeDTO> result = recipeService.searchRecipesNative(ingredient, category, title, pageable);
         return ResponseEntity.ok(result);
     }
 
@@ -201,7 +195,7 @@ public class RecipeController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Ошибка: " + e.getMessage() +
-                            "\nблагодаря @Transactional нисего не сохранилось!");
+                            "\nблагодаря @Transactional ничего не сохранилось!");
         }
     }
 

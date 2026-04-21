@@ -61,6 +61,7 @@ public class UserService {
         User user = new User();
         user.setUserName(dto.getUserName());
         user.setEmail(dto.getEmail());
+        user.setAvatarUrl(dto.getAvatarUrl());
 
         user = userRepository.save(user);
         log.info("Пользователь успешно создан: ID={}, userName='{}'", user.getId(), user.getUserName());
@@ -80,6 +81,7 @@ public class UserService {
         String oldName = user.getUserName();
         user.setUserName(dto.getUserName());
         user.setEmail(dto.getEmail());
+        user.setAvatarUrl(dto.getAvatarUrl());
 
         log.debug("Имя пользователя изменено: '{}' -> '{}'", oldName, dto.getUserName());
         user = userRepository.save(user);

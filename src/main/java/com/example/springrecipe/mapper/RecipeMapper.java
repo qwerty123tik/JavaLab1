@@ -66,6 +66,7 @@ public class RecipeMapper {
             dto.setAverageRating(0.0);
         }
 
+        dto.setImageUrl(recipe.getImageUrl());
         return dto;
     }
 
@@ -113,6 +114,7 @@ public class RecipeMapper {
         dto.setId(user.getId());
         dto.setUserName(user.getUserName());
         dto.setEmail(user.getEmail());
+        dto.setAvatarUrl(user.getAvatarUrl());
 
         return dto;
     }

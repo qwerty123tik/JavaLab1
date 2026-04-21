@@ -26,4 +26,5 @@ public class UserDTO {
     @Schema(description = "Email пользователя", example = "tiika@example.com",
             requiredMode = Schema.RequiredMode.REQUIRED)
     private String email;
+    private String avatarUrl;
 }

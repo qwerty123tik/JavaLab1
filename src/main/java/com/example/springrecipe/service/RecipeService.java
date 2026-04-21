@@ -70,7 +70,8 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<RecipeDTO> searchRecipesJPQL(String ingredientName, String categoryName, Pageable pageable) {
+    public Page<RecipeDTO> searchRecipesJPQL(String ingredientName, String categoryName, String title,
+                                             Pageable pageable) {
         RecipeCacheKey cacheKey = new RecipeCacheKey(
                 ingredientName,
                 categoryName,
@@ -79,7 +80,8 @@ public class RecipeService {
                 pageable.getSort().toString().contains(":")
                         ? pageable.getSort().toString().split(":")[0].trim()
                         : "name",
-                pageable.getSort().toString().contains("DESC") ? "DESC" : "ASC"
+                pageable.getSort().toString().contains("DESC") ? "DESC" : "ASC",
+                title
         );
         log.info("Поиск рецептов с ключом: {}", cacheKey);
 
@@ -90,7 +92,7 @@ public class RecipeService {
         }
 
         log.info("ДАННЫХ НЕТ В КЭШЕ, выполняем запрос к БД");
-        Page<Recipe> recipePage = recipeRepository.findByJPQL(ingredientName, categoryName, pageable);
+        Page<Recipe> recipePage = recipeRepository.findByJPQL(ingredientName, categoryName, title, pageable);
         Page<RecipeDTO> resultPage = recipePage.map(mapper::toRecipeDTO);
 
         recipeCache.put(cacheKey, resultPage);
@@ -100,7 +102,8 @@ public class RecipeService {
     }
 
     @Transactional(readOnly = true)
-    public Page<RecipeDTO> searchRecipesNative(String ingredientName, String categoryName, Pageable pageable) {
+    public Page<RecipeDTO> searchRecipesNative(String ingredientName, String categoryName, String title,
+                                               Pageable pageable) {
         RecipeCacheKey cacheKey = new RecipeCacheKey(
                 "native_" + ingredientName,
                 categoryName,
@@ -109,7 +112,8 @@ public class RecipeService {
                 pageable.getSort().toString().contains(":")
                         ? pageable.getSort().toString().split(":")[0].trim()
                         : "name",
-                pageable.getSort().toString().contains("DESC") ? "DESC" : "ASC"
+                pageable.getSort().toString().contains("DESC") ? "DESC" : "ASC",
+                title
         );
 
         if (recipeCache.containsKey(cacheKey)) {
@@ -117,7 +121,7 @@ public class RecipeService {
             return recipeCache.get(cacheKey);
         }
 
-        Page<Recipe> recipePage = recipeRepository.findByNative(ingredientName, categoryName, pageable);
+        Page<Recipe> recipePage = recipeRepository.findByNative(ingredientName, categoryName, title, pageable);
         Page<RecipeDTO> resultPage = recipePage.map(mapper::toRecipeDTO);
 
         recipeCache.put(cacheKey, resultPage);
@@ -294,7 +298,7 @@ public class RecipeService {
             recipeIngredientRepository.saveAll(recipeIngredients);
             recipe.setRecipeIngredients(recipeIngredients);
         }
-
+        recipe.setImageUrl(dto.getImageUrl());
         return mapper.toRecipeDTO(recipe);
     }
 
@@ -348,7 +352,7 @@ public class RecipeService {
         } else {
             recipe.getRecipeIngredients().clear();
         }
-
+        recipe.setImageUrl(dto.getImageUrl());
         recipe = recipeRepository.save(recipe);
         invalidateCache();
         return mapper.toRecipeDTO(recipe);

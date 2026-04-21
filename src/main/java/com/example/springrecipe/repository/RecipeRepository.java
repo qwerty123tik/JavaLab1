@@ -36,6 +36,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
             "(:categoryName IS NULL OR LOWER(r.category.name) LIKE LOWER(CONCAT('%', :categoryName, '%')))")
     Page<Recipe> findByJPQL(@Param("ingredientName") String ingredientName,
                             @Param("categoryName") String categoryName,
+                            @Param("title") String title,
                             Pageable pageable);
 
     @Query(value = "SELECT DISTINCT r.* FROM recipes r " +
@@ -44,17 +45,21 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
             "LEFT JOIN categories c ON r.category_id = c.id " +
             "WHERE " +
             "(:ingredientName IS NULL OR CAST(i.name AS TEXT) ILIKE '%' || CAST(:ingredientName AS TEXT) || '%') AND " +
-            "(:categoryName IS NULL OR CAST(c.name AS TEXT) ILIKE '%' || CAST(:categoryName AS TEXT) || '%')",
+            "(:categoryName IS NULL OR CAST(c.name AS TEXT) ILIKE '%' || CAST(:categoryName AS TEXT) || '%') AND " +
+            "(:title IS NULL OR CAST(r.name AS TEXT) ILIKE '%' || CAST(:title AS TEXT) || '%')",
             countQuery = "SELECT COUNT(DISTINCT r.id) FROM recipes r " +
                     "LEFT JOIN recipe_ingredients ri ON r.id = ri.recipe_id " +
                     "LEFT JOIN ingredients i ON ri.ingredient_id = i.id " +
                     "LEFT JOIN categories c ON r.category_id = c.id " +
                     "WHERE " +
-                    "(:ingredientName IS NULL OR CAST(i.name AS TEXT) ILIKE '%' " +
-                    "|| CAST(:ingredientName AS TEXT) || '%') AND " +
-                    "(:categoryName IS NULL OR CAST(c.name AS TEXT) ILIKE '%' || CAST(:categoryName AS TEXT) || '%')",
+                    "(:ingredientName IS NULL OR CAST(i.name AS TEXT) ILIKE '%' || " +
+                    "CAST(:ingredientName AS TEXT) || '%') AND " +
+                    "(:categoryName IS NULL OR CAST(c.name AS TEXT) ILIKE '%' " +
+                    "|| CAST(:categoryName AS TEXT) || '%') AND " +
+                    "(:title IS NULL OR CAST(r.name AS TEXT) ILIKE '%' || CAST(:title AS TEXT) || '%')",
             nativeQuery = true)
     Page<Recipe> findByNative(@Param("ingredientName") String ingredientName,
                               @Param("categoryName") String categoryName,
+                              @Param("title") String title,
                               Pageable pageable);
 }

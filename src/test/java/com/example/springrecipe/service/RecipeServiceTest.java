@@ -131,58 +131,70 @@ class RecipeServiceTest {
     void searchRecipesJPQL_cacheMiss_shouldQueryDbAndCache() {
         String ingredientName = "Flour";
         String categoryName = "Breakfast";
+        String title = null;
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
-        Page<RecipeDTO> dtoPage = new PageImpl<>(List.of(testRecipeDTO));
 
-        when(recipeRepository.findByJPQL(ingredientName, categoryName, pageable)).thenReturn(recipePage);
+        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
+
+        when(recipeRepository.findByJPQL(ingredientName, categoryName, title, pageable))
+                .thenReturn(recipePage);
         when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
 
-        Page<RecipeDTO> result = recipeService.searchRecipesJPQL(ingredientName, categoryName, pageable);
+        Page<RecipeDTO> result =
+                recipeService.searchRecipesJPQL(ingredientName, categoryName, title, pageable);
 
-        assertThat(result).isEqualTo(dtoPage);
-        verify(recipeRepository).findByJPQL(ingredientName, categoryName, pageable);
+        assertThat(result.getContent()).containsExactly(testRecipeDTO);
+        verify(recipeRepository).findByJPQL(ingredientName, categoryName, title, pageable);
     }
 
     @Test
     void searchRecipesJPQL_cacheHit_shouldReturnCached() {
         String ingredientName = "Flour";
         String categoryName = "Breakfast";
+        String title = null;
         Pageable pageable = PageRequest.of(0, 10);
-        Page<RecipeDTO> dtoPage = new PageImpl<>(List.of(testRecipeDTO));
 
-        when(recipeRepository.findByJPQL(ingredientName, categoryName, pageable)).thenReturn(new PageImpl<>(List.of(testRecipe)));
+        when(recipeRepository.findByJPQL(ingredientName, categoryName, title, pageable))
+                .thenReturn(new PageImpl<>(List.of(testRecipe)));
         when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
-        recipeService.searchRecipesJPQL(ingredientName, categoryName, pageable); // populate cache
 
-        Page<RecipeDTO> result = recipeService.searchRecipesJPQL(ingredientName, categoryName, pageable);
-        assertThat(result).isEqualTo(dtoPage);
-        verify(recipeRepository, times(1)).findByJPQL(any(), any(), any());
+        recipeService.searchRecipesJPQL(ingredientName, categoryName, title, pageable);
+
+        Page<RecipeDTO> result =
+                recipeService.searchRecipesJPQL(ingredientName, categoryName, title, pageable);
+
+        assertThat(result.getContent()).containsExactly(testRecipeDTO);
+        verify(recipeRepository, times(1))
+                .findByJPQL(ingredientName, categoryName, title, pageable);
     }
 
     @Test
     void searchRecipesJPQL_withNullParams_shouldWork() {
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
-        when(recipeRepository.findByJPQL(null, null, pageable)).thenReturn(recipePage);
+
+        when(recipeRepository.findByJPQL(null, null, null, pageable))
+                .thenReturn(new PageImpl<>(List.of(testRecipe)));
         when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
 
-        Page<RecipeDTO> result = recipeService.searchRecipesJPQL(null, null, pageable);
+        Page<RecipeDTO> result =
+                recipeService.searchRecipesJPQL(null, null, null, pageable);
 
         assertThat(result).isNotNull();
-        verify(recipeRepository).findByJPQL(null, null, pageable);
+        verify(recipeRepository).findByJPQL(null, null, null, pageable);
     }
 
     @Test
     void searchRecipesJPQL_withAscendingSort_shouldCoverAscBranch() {
         Sort sort = Sort.by("name").ascending();
         Pageable pageable = PageRequest.of(0, 10, sort);
-        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
 
-        when(recipeRepository.findByJPQL(any(), any(), eq(pageable))).thenReturn(recipePage);
+        when(recipeRepository.findByJPQL(any(), any(), any(), eq(pageable)))
+                .thenReturn(new PageImpl<>(List.of(testRecipe)));
         when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
 
-        Page<RecipeDTO> result = recipeService.searchRecipesJPQL("Flour", "Breakfast", pageable);
+        Page<RecipeDTO> result =
+                recipeService.searchRecipesJPQL("Flour", "Breakfast", null, pageable);
+
         assertThat(result).isNotNull();
     }
 
@@ -190,12 +202,14 @@ class RecipeServiceTest {
     void searchRecipesJPQL_withDescendingSort_shouldCoverDescBranch() {
         Sort sort = Sort.by("name").descending();
         Pageable pageable = PageRequest.of(0, 10, sort);
-        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
 
-        when(recipeRepository.findByJPQL(any(), any(), eq(pageable))).thenReturn(recipePage);
+        when(recipeRepository.findByJPQL(any(), any(), any(), eq(pageable)))
+                .thenReturn(new PageImpl<>(List.of(testRecipe)));
         when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
 
-        Page<RecipeDTO> result = recipeService.searchRecipesJPQL("Flour", "Breakfast", pageable);
+        Page<RecipeDTO> result =
+                recipeService.searchRecipesJPQL("Flour", "Breakfast", null, pageable);
+
         assertThat(result).isNotNull();
     }
 
@@ -203,57 +217,74 @@ class RecipeServiceTest {
     void searchRecipesNative_cacheMiss_shouldQueryDbAndCache() {
         String ingredientName = "Flour";
         String categoryName = "Breakfast";
+        String title = null;
         Pageable pageable = PageRequest.of(0, 10);
-        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
-        when(recipeRepository.findByNative(ingredientName, categoryName, pageable)).thenReturn(recipePage);
+
+        when(recipeRepository.findByNative(ingredientName, categoryName, title, pageable))
+                .thenReturn(new PageImpl<>(List.of(testRecipe)));
         when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
 
-        Page<RecipeDTO> result = recipeService.searchRecipesNative(ingredientName, categoryName, pageable);
+        Page<RecipeDTO> result =
+                recipeService.searchRecipesNative(ingredientName, categoryName, title, pageable);
 
         assertThat(result).isNotNull();
-        verify(recipeRepository).findByNative(ingredientName, categoryName, pageable);
+        verify(recipeRepository).findByNative(ingredientName, categoryName, title, pageable);
     }
 
     @Test
     void searchRecipesNative_cacheHit_shouldReturnCached() {
         String ingredientName = "Flour";
         String categoryName = "Breakfast";
+        String title = null;
         Pageable pageable = PageRequest.of(0, 10);
-        when(recipeRepository.findByNative(ingredientName, categoryName, pageable)).thenReturn(new PageImpl<>(List.of(testRecipe)));
-        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
-        recipeService.searchRecipesNative(ingredientName, categoryName, pageable); // populate cache
 
-        Page<RecipeDTO> result = recipeService.searchRecipesNative(ingredientName, categoryName, pageable);
+        when(recipeRepository.findByNative(ingredientName, categoryName, title, pageable))
+                .thenReturn(new PageImpl<>(List.of(testRecipe)));
+        when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
+
+        recipeService.searchRecipesNative(ingredientName, categoryName, title, pageable);
+
+        Page<RecipeDTO> result =
+                recipeService.searchRecipesNative(ingredientName, categoryName, title, pageable);
+
         assertThat(result).isNotNull();
-        verify(recipeRepository, times(1)).findByNative(any(), any(), any());
+        verify(recipeRepository, times(1))
+                .findByNative(ingredientName, categoryName, title, pageable);
     }
 
     @Test
     void searchRecipesNative_withDescendingSort_shouldCoverDescBranch() {
         Sort sort = Sort.by("name").descending();
         Pageable pageable = PageRequest.of(0, 10, sort);
-        Page<Recipe> recipePage = new PageImpl<>(List.of(testRecipe));
 
-        when(recipeRepository.findByNative(any(), any(), eq(pageable))).thenReturn(recipePage);
+        when(recipeRepository.findByNative(any(), any(), any(), eq(pageable)))
+                .thenReturn(new PageImpl<>(List.of(testRecipe)));
         when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
 
-        Page<RecipeDTO> result = recipeService.searchRecipesNative("Flour", "Breakfast", pageable);
+        Page<RecipeDTO> result =
+                recipeService.searchRecipesNative("Flour", "Breakfast", null, pageable);
+
         assertThat(result).isNotNull();
     }
 
     @Test
     void getCacheStatistics_shouldReturnStats() {
         Pageable pageable = PageRequest.of(0, 10);
-        when(recipeRepository.findByJPQL(any(), any(), any())).thenReturn(new PageImpl<>(List.of(testRecipe)));
+
+        when(recipeRepository.findByJPQL(any(), any(), any(), any()))
+                .thenReturn(new PageImpl<>(List.of(testRecipe)));
         when(mapper.toRecipeDTO(testRecipe)).thenReturn(testRecipeDTO);
-        recipeService.searchRecipesJPQL("Flour", "Breakfast", pageable);
+
+        recipeService.searchRecipesJPQL("Flour", "Breakfast", null, pageable);
+
         Map<String, Object> stats = recipeService.getCacheStatistics();
 
         assertThat(stats)
                 .containsEntry("cacheSize", 1)
                 .containsEntry("cacheHits", 0)
                 .containsEntry("dataChanged", false)
-                .satisfies(map -> assertThat(map.get("cacheKeys")).isInstanceOf(List.class));
+                .satisfies(map ->
+                        assertThat(map.get("cacheKeys")).isInstanceOf(List.class));
     }
 
     @Test

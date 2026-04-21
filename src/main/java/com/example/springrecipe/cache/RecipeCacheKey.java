@@ -14,6 +14,7 @@ public class RecipeCacheKey {
     private int pageSize;
     private String sortBy;
     private String sortDirection;
+    private String title;
 
     @Override
     public boolean equals(Object o) {
@@ -28,11 +29,12 @@ public class RecipeCacheKey {
         return Objects.equals(ingredientName, that.ingredientName) &&
                 Objects.equals(categoryName, that.categoryName) &&
                 Objects.equals(pageNumber, that.pageNumber) &&
+                Objects.equals(title, that.title) &&
                 Objects.equals(pageSize, that.pageSize);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ingredientName, categoryName, pageNumber, pageSize);
+        return Objects.hash(ingredientName, categoryName, pageNumber, pageSize, title);
     }
 }
