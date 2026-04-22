@@ -42,7 +42,8 @@
             **/config/**,
             **/aspect/**,
             **/cache/**,
-            **/SpringRecipeApplication.java
+            **/SpringRecipeApplication.java,
+            **/RaceConditionDemoService.java
         </sonar.coverage.exclusions>
     </properties>
 
