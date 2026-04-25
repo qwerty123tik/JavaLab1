@@ -17,7 +17,7 @@ export default function UsersPage() {
 
     return (
         <Container className="mt-4">
-            <h1>Users</h1>
+            <h1>Пользователи</h1>
             <Row>
                 {users.map(user => (
                     <Col md={4} key={user.id} className="mb-4">

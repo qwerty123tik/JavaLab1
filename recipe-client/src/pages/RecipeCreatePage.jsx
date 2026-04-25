@@ -10,6 +10,7 @@ export default function RecipeCreatePage() {
     const [categories, setCategories] = useState([]);
     const [existingIngredients, setExistingIngredients] = useState([]);
     const [units, setUnits] = useState([]);
+    const [searchIngredient, setSearchIngredient] = useState(''); // состояние поиска
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -35,6 +36,11 @@ export default function RecipeCreatePage() {
                 if (catRes.data.length) setFormData(prev => ({ ...prev, categoryId: catRes.data[0].id }));
             });
     }, []);
+
+    // Фильтрация ингредиентов по поисковому запросу
+    const filteredIngredients = existingIngredients.filter(ing =>
+        ing.name.toLowerCase().includes(searchIngredient.toLowerCase())
+    );
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -69,12 +75,12 @@ export default function RecipeCreatePage() {
 
     const handleAddNewIngredient = () => {
         if (!newIngredient.name.trim()) {
-            setError('Please enter ingredient name');
+            setError('Введите название ингредиента');
             return;
         }
         const duplicate = existingIngredients.some(ing => ing.name.toLowerCase() === newIngredient.name.trim().toLowerCase());
         if (duplicate) {
-            setError(`Ingredient "${newIngredient.name}" already exists. Please select it from the list.`);
+            setError(`Ингредиент "${newIngredient.name}" уже существует. Выберите его из списка.`);
             return;
         }
         const tempId = Date.now();
@@ -97,16 +103,16 @@ export default function RecipeCreatePage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!user) {
-            setError('You must be logged in to create a recipe');
+            setError('Вы должны войти, чтобы создать рецепт');
             return;
         }
         if (selectedIngredients.length === 0) {
-            setError('Select at least one ingredient');
+            setError('Выберите хотя бы один ингредиент');
             return;
         }
         const invalid = selectedIngredients.some(ing => !ing.quantity || ing.quantity <= 0);
         if (invalid) {
-            setError('Please enter a valid quantity (>0) for each ingredient');
+            setError('Введите корректное количество (>0) для каждого ингредиента');
             return;
         }
 
@@ -146,48 +152,55 @@ export default function RecipeCreatePage() {
             await createRecipe(recipeToSend);
             navigate('/');
         } catch (err) {
-            setError('Error creating recipe');
+            setError('Ошибка при создании рецепта');
         }
     };
 
     return (
         <Container>
-            <h1 className="my-4">New Recipe</h1>
+            <h1 className="my-4">Новый рецепт</h1>
             {error && <Alert variant="danger">{error}</Alert>}
             <Form onSubmit={handleSubmit}>
                 <Row>
                     <Col md={6}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Name *</Form.Label>
+                            <Form.Label>Название *</Form.Label>
                             <Form.Control name="name" value={formData.name} onChange={handleChange} required />
                         </Form.Group>
                     </Col>
                     <Col md={6}>
                         <Form.Group className="mb-3">
-                            <Form.Label>Cooking time (min) *</Form.Label>
+                            <Form.Label>Время приготовления (мин) *</Form.Label>
                             <Form.Control type="number" name="cookingTime" value={formData.cookingTime} onChange={handleChange} required />
                         </Form.Group>
                     </Col>
                 </Row>
                 <Form.Group className="mb-3">
-                    <Form.Label>Description</Form.Label>
+                    <Form.Label>Описание</Form.Label>
                     <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleChange} />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>Image URL</Form.Label>
+                    <Form.Label>URL изображения</Form.Label>
                     <Form.Control name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://..." />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                    <Form.Label>Category *</Form.Label>
+                    <Form.Label>Категория *</Form.Label>
                     <Form.Select name="categoryId" value={formData.categoryId} onChange={handleChange} required>
                         {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                     </Form.Select>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Label>Ingredients</Form.Label>
+                    <Form.Label>Ингредиенты</Form.Label>
+                    <Form.Control
+                        type="text"
+                        placeholder="🔍 Поиск ингредиентов..."
+                        value={searchIngredient}
+                        onChange={e => setSearchIngredient(e.target.value)}
+                        className="mb-2"
+                    />
                     <div style={{ maxHeight: '400px', overflowY: 'auto', border: '1px solid #ced4da', padding: '12px', borderRadius: '8px' }}>
-                        {existingIngredients.map(ing => {
+                        {filteredIngredients.map(ing => {
                             const selected = selectedIngredients.find(i => i.ingredientId === ing.id && !i.isNew);
                             return (
                                 <div key={ing.id} className="mb-3 p-2 border rounded">
@@ -201,7 +214,7 @@ export default function RecipeCreatePage() {
                                         <div className="mt-2 ms-4">
                                             <Row>
                                                 <Col md={6}>
-                                                    <Form.Label>Quantity</Form.Label>
+                                                    <Form.Label>Количество</Form.Label>
                                                     <Form.Control
                                                         type="number"
                                                         step="0.1"
@@ -211,7 +224,7 @@ export default function RecipeCreatePage() {
                                                     />
                                                 </Col>
                                                 <Col md={6}>
-                                                    <Form.Label>Unit</Form.Label>
+                                                    <Form.Label>Единица</Form.Label>
                                                     <Form.Select
                                                         value={selected.unitAbbreviation}
                                                         onChange={(e) => handleIngredientChange(ing.id, 'unitAbbreviation', e.target.value)}
@@ -239,13 +252,13 @@ export default function RecipeCreatePage() {
                                         size="sm"
                                         onClick={() => setSelectedIngredients(selectedIngredients.filter(i => i.tempId !== ing.tempId))}
                                     >
-                                        Remove
+                                        Удалить
                                     </Button>
                                 </div>
                                 <div className="mt-2 ms-4">
                                     <Row>
                                         <Col md={6}>
-                                            <Form.Label>Quantity</Form.Label>
+                                            <Form.Label>Количество</Form.Label>
                                             <Form.Control
                                                 type="number"
                                                 step="0.1"
@@ -255,7 +268,7 @@ export default function RecipeCreatePage() {
                                             />
                                         </Col>
                                         <Col md={6}>
-                                            <Form.Label>Unit</Form.Label>
+                                            <Form.Label>Единица</Form.Label>
                                             <Form.Select
                                                 value={ing.unitAbbreviation}
                                                 onChange={(e) => handleIngredientChange(ing.ingredientId, 'unitAbbreviation', e.target.value)}
@@ -274,14 +287,14 @@ export default function RecipeCreatePage() {
 
                         {!showNewIngredient ? (
                             <Button variant="outline-primary" onClick={() => setShowNewIngredient(true)}>
-                                + Add new ingredient
+                                + Добавить новый ингредиент
                             </Button>
                         ) : (
                             <div className="mt-2 p-3 border rounded bg-white">
                                 <Row>
                                     <Col md={5}>
                                         <Form.Control
-                                            placeholder="Ingredient name"
+                                            placeholder="Название ингредиента"
                                             value={newIngredient.name}
                                             onChange={e => setNewIngredient({ ...newIngredient, name: e.target.value })}
                                         />
@@ -290,7 +303,7 @@ export default function RecipeCreatePage() {
                                         <Form.Control
                                             type="number"
                                             step="0.1"
-                                            placeholder="Quantity"
+                                            placeholder="Количество"
                                             value={newIngredient.quantity}
                                             onChange={e => setNewIngredient({ ...newIngredient, quantity: parseFloat(e.target.value) })}
                                         />
@@ -300,7 +313,7 @@ export default function RecipeCreatePage() {
                                             value={newIngredient.unitAbbreviation}
                                             onChange={e => setNewIngredient({ ...newIngredient, unitAbbreviation: e.target.value })}
                                         >
-                                            <option value="">Select unit</option>
+                                            <option value="">Выберите единицу</option>
                                             {units.map(unit => (
                                                 <option key={unit.id} value={unit.abbreviation}>
                                                     {unit.name} ({unit.abbreviation})
@@ -309,16 +322,17 @@ export default function RecipeCreatePage() {
                                         </Form.Select>
                                     </Col>
                                     <Col md={1}>
-                                        <Button variant="success" onClick={handleAddNewIngredient}>Add</Button>
+                                        <Button variant="success" onClick={handleAddNewIngredient}>Добавить</Button>
                                     </Col>
                                 </Row>
-                                <Button variant="link" size="sm" onClick={() => setShowNewIngredient(false)}>Cancel</Button>
+                                <Button variant="link" size="sm" onClick={() => setShowNewIngredient(false)}>Отмена</Button>
                             </div>
                         )}
                     </div>
                 </Form.Group>
 
-                <Button variant="primary" type="submit" className="mt-3">Save Recipe</Button>
+                <Button variant="primary" type="submit" className="mt-4 mb-4">Сохранить рецепт</Button>
+
             </Form>
         </Container>
     );

@@ -1,3 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+*,
+*::before,
+*::after,
+body,
+.navbar,
+.navbar-brand,
+.nav-link,
+.btn,
+.form-control,
+.card,
+.alert,
+.list-group-item,
+h1, h2, h3, h4, h5, h6,
+p, span, div,
+.navbar-text,
+.pagination .page-link,
+.pagination .page-item,
+.bg-warm,
+.home-hero h1,
+.rating,
+.recipe-card .card-title,
+.filter-bar .form-control,
+.filter-bar .btn,
+.recipe-meta,
+.review-card,
+.user-name,
+.alert-danger {
+    font-family: 'Playfair Display', serif !important;
+}
+
 :root {
     --primary-green: #2C5F2D;
     --primary-light: #97BC62;

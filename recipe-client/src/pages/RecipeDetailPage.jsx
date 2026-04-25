@@ -13,7 +13,7 @@ import { useAuth } from '../context/AuthContext';
 export default function RecipeDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { user } = useAuth(); // текущий авторизованный пользователь
+    const { user } = useAuth();
     const [recipe, setRecipe] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ export default function RecipeDetailPage() {
                 setLoading(false);
             })
             .catch(err => {
-                setError('Failed to load recipe or reviews');
+                setError('Не удалось загрузить рецепт или отзывы');
                 setLoading(false);
             });
     }, [id]);
@@ -39,14 +39,14 @@ export default function RecipeDetailPage() {
             const res = await getReviewsByRecipe(id);
             setReviews(res.data);
         } catch (err) {
-            console.error('Error loading reviews', err);
+            console.error('Ошибка загрузки отзывов', err);
         }
     };
 
     const handleReviewSubmit = async (e) => {
         e.preventDefault();
         if (!user) {
-            setError('You must be logged in to add a review');
+            setError('Вы должны войти, чтобы оставить отзыв');
             return;
         }
         setSubmitting(true);
@@ -60,30 +60,30 @@ export default function RecipeDetailPage() {
             setNewReview({ rating: 5, comment: '' });
             await loadReviews();
         } catch (err) {
-            setError('Failed to add review');
+            setError('Не удалось добавить отзыв');
         } finally {
             setSubmitting(false);
         }
     };
 
     const handleDeleteReview = async (reviewId) => {
-        if (window.confirm('Delete this review?')) {
+        if (window.confirm('Удалить этот отзыв?')) {
             try {
                 await deleteReview(reviewId);
                 await loadReviews();
             } catch (err) {
-                setError('Failed to delete review');
+                setError('Не удалось удалить отзыв');
             }
         }
     };
 
     const handleDeleteRecipe = async () => {
-        if (window.confirm('Delete this recipe? This will also delete all its reviews.')) {
+        if (window.confirm('Удалить рецепт? Все связанные отзывы также будут удалены.')) {
             try {
                 await deleteRecipe(id);
                 navigate('/');
             } catch (err) {
-                setError('Failed to delete recipe');
+                setError('Не удалось удалить рецепт');
             }
         }
     };
@@ -94,7 +94,7 @@ export default function RecipeDetailPage() {
 
     if (loading) return <Container className="mt-4"><Spinner animation="border" /></Container>;
     if (error) return <Container className="mt-4"><Alert variant="danger">{error}</Alert></Container>;
-    if (!recipe) return <Container className="mt-4">Recipe not found</Container>;
+    if (!recipe) return <Container className="mt-4">Рецепт не найден</Container>;
 
     const isAuthor = user && user.id === recipe.authorId;
 
@@ -111,21 +111,21 @@ export default function RecipeDetailPage() {
                 <Col md={6}>
                     <h1>{recipe.name}</h1>
                     <div className="recipe-meta">
-                        <p><strong>Author:</strong> {recipe.authorName}</p>
-                        <p><strong>Category:</strong> {recipe.categoryName}</p>
-                        <p><strong>Time:</strong> {recipe.cookingTime} min</p>
+                        <p><strong>Автор:</strong> {recipe.authorName}</p>
+                        <p><strong>Категория:</strong> {recipe.categoryName}</p>
+                        <p><strong>Время:</strong> {recipe.cookingTime} мин</p>
                     </div>
                     <p>{recipe.description}</p>
                     {isAuthor && (
                         <div className="mt-3">
-                            <Button variant="secondary" onClick={handleEditRecipe} className="me-2">Edit Recipe</Button>
-                            <Button variant="danger" onClick={handleDeleteRecipe}>Delete Recipe</Button>
+                            <Button variant="secondary" onClick={handleEditRecipe} className="me-2">Редактировать рецепт</Button>
+                            <Button variant="danger" onClick={handleDeleteRecipe}>Удалить рецепт</Button>
                         </div>
                     )}
                 </Col>
             </Row>
 
-            <h3 className="mt-4">Ingredients</h3>
+            <h3 className="mt-4">Ингредиенты</h3>
             <ListGroup className="mb-4">
                 {recipe.recipeIngredients?.map(ing => (
                     <ListGroup.Item key={ing.ingredientId}>
@@ -134,11 +134,11 @@ export default function RecipeDetailPage() {
                 ))}
             </ListGroup>
 
-            <h3>Reviews</h3>
+            <h3>Отзывы</h3>
             {user ? (
                 <Form onSubmit={handleReviewSubmit} className="mb-4 p-3 bg-light rounded">
                     <Form.Group className="mb-2">
-                        <Form.Label>Rating</Form.Label>
+                        <Form.Label>Оценка</Form.Label>
                         <Form.Select
                             value={newReview.rating}
                             onChange={e => setNewReview({ ...newReview, rating: parseInt(e.target.value) })}
@@ -151,7 +151,7 @@ export default function RecipeDetailPage() {
                         </Form.Select>
                     </Form.Group>
                     <Form.Group className="mb-2">
-                        <Form.Label>Comment</Form.Label>
+                        <Form.Label>Комментарий</Form.Label>
                         <Form.Control
                             as="textarea"
                             rows={2}
@@ -160,17 +160,17 @@ export default function RecipeDetailPage() {
                         />
                     </Form.Group>
                     <Button variant="primary" type="submit" disabled={submitting}>
-                        {submitting ? 'Adding...' : 'Add review'}
+                        {submitting ? 'Добавление...' : 'Добавить отзыв'}
                     </Button>
                 </Form>
             ) : (
                 <Alert variant="info">
-                    Please <Link to="/login">login</Link> to leave a review.
+                    Пожалуйста, <Link to="/login">войдите</Link>, чтобы оставить отзыв.
                 </Alert>
             )}
 
             {reviews.length === 0 ? (
-                <Alert variant="info">No reviews yet. Be the first!</Alert>
+                <Alert variant="info">Пока нет отзывов. Будьте первым!</Alert>
             ) : (
                 <ListGroup>
                     {reviews.map(review => (
@@ -188,7 +188,7 @@ export default function RecipeDetailPage() {
                                     className="mt-2"
                                     onClick={() => handleDeleteReview(review.id)}
                                 >
-                                    Delete
+                                    Удалить
                                 </Button>
                             )}
                         </ListGroup.Item>

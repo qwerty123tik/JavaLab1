@@ -4,10 +4,12 @@ export default function FilterBar({ filters, setFilters, onSearch }) {
     const handleChange = (e) => {
         setFilters(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         onSearch();
     };
+
     return (
         <Form onSubmit={handleSubmit} className="filter-bar mb-4">
             <Row className="g-2 align-items-center">
@@ -15,7 +17,7 @@ export default function FilterBar({ filters, setFilters, onSearch }) {
                     <Form.Control
                         type="text"
                         name="ingredient"
-                        placeholder="Search by ingredient..."
+                        placeholder="Поиск по ингредиенту..."
                         value={filters.ingredient || ''}
                         onChange={handleChange}
                     />
@@ -24,7 +26,7 @@ export default function FilterBar({ filters, setFilters, onSearch }) {
                     <Form.Control
                         type="text"
                         name="category"
-                        placeholder="Search by category..."
+                        placeholder="Поиск по категории..."
                         value={filters.category || ''}
                         onChange={handleChange}
                     />
@@ -33,13 +35,13 @@ export default function FilterBar({ filters, setFilters, onSearch }) {
                     <Form.Control
                         type="text"
                         name="title"
-                        placeholder="Search by title..."
+                        placeholder="Поиск по названию..."
                         value={filters.title || ''}
                         onChange={handleChange}
                     />
                 </Col>
                 <Col md={2}>
-                    <Button type="submit" variant="primary" className="w-100">Search</Button>
+                    <Button type="submit" variant="primary" className="w-100">Найти</Button>
                 </Col>
             </Row>
         </Form>

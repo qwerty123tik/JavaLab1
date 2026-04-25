@@ -15,24 +15,23 @@ export default function NavBar() {
         <Navbar expand="lg" className="py-3">
             <Container>
                 <Navbar.Brand as={Link} to="/" className="fw-bold">
-                    Recipe System
+                    Система рецептов
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
-                        <Nav.Link as={Link} to="/">Recipes</Nav.Link>
-                        <Nav.Link as={Link} to="/users">Users</Nav.Link>
-                        {user && <Nav.Link as={Link} to="/my-profile">My Profile</Nav.Link>}
-                        {user && <Nav.Link as={Link} to="/create">Add Recipe</Nav.Link>}
+                        <Nav.Link as={Link} to="/">Рецепты</Nav.Link>
+                        <Nav.Link as={Link} to="/users">Пользователи</Nav.Link>
+                        {user && <Nav.Link as={Link} to="/my-profile">Мой профиль</Nav.Link>}
                         {user ? (
                             <>
-                                <Navbar.Text className="me-2">Welcome, {user.userName}</Navbar.Text>
-                                <Button variant="outline-danger" size="sm" onClick={handleLogout}>Logout</Button>
+                                <Navbar.Text className="me-2">Привет, {user.userName}</Navbar.Text>
+                                <Button variant="outline-danger" size="sm" onClick={handleLogout}>Выйти</Button>
                             </>
                         ) : (
                             <>
-                                <Nav.Link as={Link} to="/login">Login</Nav.Link>
-                                <Nav.Link as={Link} to="/register">Register</Nav.Link>
+                                <Nav.Link as={Link} to="/login">Войти</Nav.Link>
+                                <Nav.Link as={Link} to="/register">Регистрация</Nav.Link>
                             </>
                         )}
                     </Nav>

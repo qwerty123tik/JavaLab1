@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getUsers, getRecipesByAuthor, getReviewsByUser, updateUser, deleteUser } from '../api/recipeApi';
-import { Container, Row, Col, Image, ListGroup, Tab, Tabs, Spinner, Alert, Button, Form, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Image, ListGroup, Tab, Tabs, Spinner, Alert, Button, Form, Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 
 export default function UserProfilePage() {
     const { userId } = useParams();
     const navigate = useNavigate();
+    const { user: currentUser } = useAuth();
     const [user, setUser] = useState(null);
     const [recipes, setRecipes] = useState([]);
     const [reviews, setReviews] = useState([]);
@@ -33,7 +36,7 @@ export default function UserProfilePage() {
                 const reviewsRes = await getReviewsByUser(userId);
                 setReviews(reviewsRes.data.content || reviewsRes.data || []);
             } catch (err) {
-                setError('Failed to load user data');
+                setError('Не удалось загрузить данные пользователя');
             } finally {
                 setLoading(false);
             }
@@ -47,24 +50,24 @@ export default function UserProfilePage() {
             setUser(updated.data);
             setShowEditModal(false);
         } catch (err) {
-            setError('Failed to update user');
+            setError('Не удалось обновить пользователя');
         }
     };
 
     const handleDeleteUser = async () => {
-        if (window.confirm('Delete this user? All their recipes and reviews will be deleted.')) {
+        if (window.confirm('Удалить этого пользователя? Все его рецепты и отзывы будут удалены.')) {
             try {
                 await deleteUser(userId);
                 navigate('/users');
             } catch (err) {
-                setError('Failed to delete user');
+                setError('Не удалось удалить пользователя');
             }
         }
     };
 
     if (loading) return <Container className="mt-4"><Spinner animation="border" /></Container>;
     if (error) return <Container className="mt-4"><Alert variant="danger">{error}</Alert></Container>;
-    if (!user) return <Container className="mt-4">User not found</Container>;
+    if (!user) return <Container className="mt-4">Пользователь не найден</Container>;
 
     return (
         <Container className="mt-4">
@@ -78,16 +81,24 @@ export default function UserProfilePage() {
                     />
                     <h3 className="mt-3">{user.userName}</h3>
                     <p>{user.email}</p>
-                    <div>
-                        <Button variant="secondary" size="sm" onClick={() => setShowEditModal(true)} className="me-2">Edit Profile</Button>
-                        <Button variant="danger" size="sm" onClick={handleDeleteUser}>Delete Account</Button>
+                    <div className="d-flex justify-content-center gap-2 mt-3">
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Редактировать профиль</Tooltip>}>
+                            <Button variant="outline-secondary" size="sm" onClick={() => setShowEditModal(true)}>
+                                <FaEdit />
+                            </Button>
+                        </OverlayTrigger>
+                        <OverlayTrigger placement="top" overlay={<Tooltip>Удалить аккаунт</Tooltip>}>
+                            <Button variant="outline-danger" size="sm" onClick={handleDeleteUser}>
+                                <FaTrashAlt />
+                            </Button>
+                        </OverlayTrigger>
                     </div>
                 </Col>
                 <Col md={9}>
                     <Tabs defaultActiveKey="recipes" className="mb-3">
-                        <Tab eventKey="recipes" title={`Recipes (${recipes.length})`}>
+                        <Tab eventKey="recipes" title={`Рецепты (${recipes.length})`}>
                             {recipes.length === 0 ? (
-                                <p>No recipes yet.</p>
+                                <p>Нет рецептов.</p>
                             ) : (
                                 <Row>
                                     {recipes.map(recipe => (
@@ -107,19 +118,19 @@ export default function UserProfilePage() {
                                 </Row>
                             )}
                         </Tab>
-                        <Tab eventKey="reviews" title={`Reviews (${reviews.length})`}>
+                        <Tab eventKey="reviews" title={`Отзывы (${reviews.length})`}>
                             {reviews.length === 0 ? (
-                                <p>No reviews yet.</p>
+                                <p>Нет отзывов.</p>
                             ) : (
                                 <ListGroup>
                                     {reviews.map(review => (
                                         <ListGroup.Item key={review.id}>
-                                            <strong>Recipe:</strong>{' '}
+                                            <strong>Рецепт:</strong>{' '}
                                             <Link to={`/recipe/${review.recipeId}`}>{review.recipeName}</Link>
                                             <br />
-                                            <strong>Rating:</strong> {'⭐'.repeat(review.rating)}
+                                            <strong>Оценка:</strong> {'⭐'.repeat(review.rating)}
                                             <br />
-                                            <strong>Comment:</strong> {review.comment}
+                                            <strong>Комментарий:</strong> {review.comment}
                                         </ListGroup.Item>
                                     ))}
                                 </ListGroup>
@@ -131,12 +142,12 @@ export default function UserProfilePage() {
 
             <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit Profile</Modal.Title>
+                    <Modal.Title>Редактировать профиль</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Label>Username</Form.Label>
+                            <Form.Label>Имя пользователя</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={editForm.userName}
@@ -152,7 +163,7 @@ export default function UserProfilePage() {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>Avatar URL</Form.Label>
+                            <Form.Label>URL аватара</Form.Label>
                             <Form.Control
                                 type="text"
                                 value={editForm.avatarUrl}
@@ -162,9 +173,13 @@ export default function UserProfilePage() {
                         </Form.Group>
                     </Form>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowEditModal(false)}>Cancel</Button>
-                    <Button variant="primary" onClick={handleUpdateUser}>Save</Button>
+                <Modal.Footer className="d-flex justify-content-between gap-2">
+                    <Button variant="secondary" onClick={() => setShowEditModal(false)} className="rounded-pill flex-fill">
+                        Отмена
+                    </Button>
+                    <Button variant="primary" onClick={handleUpdateUser} className="rounded-pill flex-fill">
+                        Сохранить
+                    </Button>
                 </Modal.Footer>
             </Modal>
         </Container>
