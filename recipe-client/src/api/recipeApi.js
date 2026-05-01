@@ -23,3 +23,6 @@ export const getReviewsByRecipe = (recipeId) => apiClient.get(`/reviews/recipe/$
 export const createReview = (review) => apiClient.post('/reviews', review);
 export const deleteReview = (id) => apiClient.delete(`/reviews/${id}`);
 export const getReviewsByUser = (userId) => apiClient.get(`/reviews/user/${userId}`);
+
+export const createCategory = (categoryData) => apiClient.post('/categories', categoryData);
+export const createUnit = (unitData) => apiClient.post('/units', unitData);

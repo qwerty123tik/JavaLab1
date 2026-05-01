@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Form, Button, Container, Row, Col, Alert, Spinner } from 'react-bootstrap';
-import { getRecipeById, updateRecipe, getCategories, getIngredients, getUnits, createIngredient } from '../api/recipeApi';
+import { Form, Button, Container, Row, Col, Alert, Spinner, Modal } from 'react-bootstrap';
+import { getRecipeById, updateRecipe, getCategories, getIngredients, getUnits, createIngredient, createCategory, createUnit } from '../api/recipeApi';
 import { useAuth } from '../context/AuthContext';
 
 export default function RecipeEditPage() {
@@ -11,7 +11,7 @@ export default function RecipeEditPage() {
     const [categories, setCategories] = useState([]);
     const [existingIngredients, setExistingIngredients] = useState([]);
     const [units, setUnits] = useState([]);
-    const [searchIngredient, setSearchIngredient] = useState(''); // поиск
+    const [searchIngredient, setSearchIngredient] = useState('');
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -29,6 +29,14 @@ export default function RecipeEditPage() {
         quantity: 1
     });
     const [isAuthor, setIsAuthor] = useState(false);
+
+    // Категория
+    const [showNewCategoryModal, setShowNewCategoryModal] = useState(false);
+    const [newCategory, setNewCategory] = useState({ name: '', description: '' });
+
+    // Единица измерения
+    const [showNewUnitModal, setShowNewUnitModal] = useState(false);
+    const [newUnit, setNewUnit] = useState({ name: '', abbreviation: '' });
 
     const filteredIngredients = existingIngredients.filter(ing =>
         ing.name.toLowerCase().includes(searchIngredient.toLowerCase())
@@ -125,6 +133,39 @@ export default function RecipeEditPage() {
         setError('');
     };
 
+    const handleCreateCategory = async () => {
+        if (!newCategory.name.trim()) {
+            setError('Введите название категории');
+            return;
+        }
+        try {
+            const created = await createCategory({ name: newCategory.name, description: newCategory.description });
+            const newCat = created.data;
+            setCategories([...categories, newCat]);
+            setFormData(prev => ({ ...prev, categoryId: newCat.id }));
+            setShowNewCategoryModal(false);
+            setNewCategory({ name: '', description: '' });
+        } catch (err) {
+            setError('Не удалось создать категорию');
+        }
+    };
+
+    const handleCreateUnit = async () => {
+        if (!newUnit.name.trim() || !newUnit.abbreviation.trim()) {
+            setError('Введите название и аббревиатуру');
+            return;
+        }
+        try {
+            const created = await createUnit({ name: newUnit.name, abbreviation: newUnit.abbreviation });
+            const newUnitObj = created.data;
+            setUnits([...units, newUnitObj]);
+            setShowNewUnitModal(false);
+            setNewUnit({ name: '', abbreviation: '' });
+        } catch (err) {
+            setError('Не удалось создать единицу измерения');
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (selectedIngredients.length === 0) {
@@ -207,11 +248,15 @@ export default function RecipeEditPage() {
                     <Form.Label>URL изображения</Form.Label>
                     <Form.Control name="imageUrl" value={formData.imageUrl} onChange={handleChange} placeholder="https://..." />
                 </Form.Group>
+
                 <Form.Group className="mb-3">
                     <Form.Label>Категория *</Form.Label>
-                    <Form.Select name="categoryId" value={formData.categoryId} onChange={handleChange} required>
-                        {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                    </Form.Select>
+                    <div className="d-flex gap-2">
+                        <Form.Select name="categoryId" value={formData.categoryId} onChange={handleChange} required className="flex-grow-1">
+                            {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                        </Form.Select>
+                        <Button variant="outline-primary" onClick={() => setShowNewCategoryModal(true)}>+ Новая</Button>
+                    </div>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
@@ -249,16 +294,20 @@ export default function RecipeEditPage() {
                                                 </Col>
                                                 <Col md={6}>
                                                     <Form.Label>Единица</Form.Label>
-                                                    <Form.Select
-                                                        value={selected.unitAbbreviation}
-                                                        onChange={(e) => handleIngredientChange(ing.id, 'unitAbbreviation', e.target.value)}
-                                                    >
-                                                        {units.map(unit => (
-                                                            <option key={unit.id} value={unit.abbreviation}>
-                                                                {unit.name} ({unit.abbreviation})
-                                                            </option>
-                                                        ))}
-                                                    </Form.Select>
+                                                    <div className="d-flex gap-2">
+                                                        <Form.Select
+                                                            value={selected.unitAbbreviation}
+                                                            onChange={(e) => handleIngredientChange(ing.id, 'unitAbbreviation', e.target.value)}
+                                                            className="flex-grow-1"
+                                                        >
+                                                            {units.map(unit => (
+                                                                <option key={unit.id} value={unit.abbreviation}>
+                                                                    {unit.name} ({unit.abbreviation})
+                                                                </option>
+                                                            ))}
+                                                        </Form.Select>
+                                                        <Button variant="outline-primary" size="sm" onClick={() => setShowNewUnitModal(true)}>+</Button>
+                                                    </div>
                                                 </Col>
                                             </Row>
                                         </div>
@@ -293,16 +342,20 @@ export default function RecipeEditPage() {
                                         </Col>
                                         <Col md={6}>
                                             <Form.Label>Единица</Form.Label>
-                                            <Form.Select
-                                                value={ing.unitAbbreviation}
-                                                onChange={(e) => handleIngredientChange(ing.ingredientId, 'unitAbbreviation', e.target.value)}
-                                            >
-                                                {units.map(unit => (
-                                                    <option key={unit.id} value={unit.abbreviation}>
-                                                        {unit.name} ({unit.abbreviation})
-                                                    </option>
-                                                ))}
-                                            </Form.Select>
+                                            <div className="d-flex gap-2">
+                                                <Form.Select
+                                                    value={ing.unitAbbreviation}
+                                                    onChange={(e) => handleIngredientChange(ing.ingredientId, 'unitAbbreviation', e.target.value)}
+                                                    className="flex-grow-1"
+                                                >
+                                                    {units.map(unit => (
+                                                        <option key={unit.id} value={unit.abbreviation}>
+                                                            {unit.name} ({unit.abbreviation})
+                                                        </option>
+                                                    ))}
+                                                </Form.Select>
+                                                <Button variant="outline-primary" size="sm" onClick={() => setShowNewUnitModal(true)}>+</Button>
+                                            </div>
                                         </Col>
                                     </Row>
                                 </div>
@@ -333,17 +386,21 @@ export default function RecipeEditPage() {
                                         />
                                     </Col>
                                     <Col md={3}>
-                                        <Form.Select
-                                            value={newIngredient.unitAbbreviation}
-                                            onChange={e => setNewIngredient({ ...newIngredient, unitAbbreviation: e.target.value })}
-                                        >
-                                            <option value="">Выберите единицу</option>
-                                            {units.map(unit => (
-                                                <option key={unit.id} value={unit.abbreviation}>
-                                                    {unit.name} ({unit.abbreviation})
-                                                </option>
-                                            ))}
-                                        </Form.Select>
+                                        <div className="d-flex gap-2">
+                                            <Form.Select
+                                                value={newIngredient.unitAbbreviation}
+                                                onChange={e => setNewIngredient({ ...newIngredient, unitAbbreviation: e.target.value })}
+                                                className="flex-grow-1"
+                                            >
+                                                <option value="">Выберите единицу</option>
+                                                {units.map(unit => (
+                                                    <option key={unit.id} value={unit.abbreviation}>
+                                                        {unit.name} ({unit.abbreviation})
+                                                    </option>
+                                                ))}
+                                            </Form.Select>
+                                            <Button variant="outline-primary" size="sm" onClick={() => setShowNewUnitModal(true)}>+</Button>
+                                        </div>
                                     </Col>
                                     <Col md={1}>
                                         <Button variant="success" onClick={handleAddNewIngredient}>Добавить</Button>
@@ -356,8 +413,49 @@ export default function RecipeEditPage() {
                 </Form.Group>
 
                 <Button variant="primary" type="submit" className="mt-4 mb-4">Сохранить изменения</Button>
-
             </Form>
+
+            {/* Модальное окно для категории */}
+            <Modal show={showNewCategoryModal} onHide={() => setShowNewCategoryModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Новая категория</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Название категории *</Form.Label>
+                        <Form.Control value={newCategory.name} onChange={e => setNewCategory({ ...newCategory, name: e.target.value })} />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Описание</Form.Label>
+                        <Form.Control as="textarea" rows={2} value={newCategory.description} onChange={e => setNewCategory({ ...newCategory, description: e.target.value })} />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowNewCategoryModal(false)}>Отмена</Button>
+                    <Button variant="primary" onClick={handleCreateCategory}>Создать</Button>
+                </Modal.Footer>
+            </Modal>
+
+            {/* Модальное окно для единицы измерения */}
+            <Modal show={showNewUnitModal} onHide={() => setShowNewUnitModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Новая единица измерения</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Название *</Form.Label>
+                        <Form.Control value={newUnit.name} onChange={e => setNewUnit({ ...newUnit, name: e.target.value })} />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>Аббревиатура *</Form.Label>
+                        <Form.Control value={newUnit.abbreviation} onChange={e => setNewUnit({ ...newUnit, abbreviation: e.target.value })} />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowNewUnitModal(false)}>Отмена</Button>
+                    <Button variant="primary" onClick={handleCreateUnit}>Создать</Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 }
