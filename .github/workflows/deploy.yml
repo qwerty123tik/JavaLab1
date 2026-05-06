@@ -21,7 +21,7 @@ jobs:
       - name: Build with Maven
         run: mvn clean compile
       - name: Run tests (skip failing ones)
-        run: mvn test -DskipTests
+        run: mvn test
 
   docker-build:
     needs: build-and-test
